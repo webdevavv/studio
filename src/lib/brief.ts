@@ -70,7 +70,18 @@ export const briefSteps: BriefStep[] = [
   { id: 'comment', label: 'Когда удобно поговорить? Что ещё учесть?', type: 'textarea', placeholder: 'Время и часовой пояс, дополнительные пожелания' },
  ] },
 ];
-export const getSteps = (a: Answers) => briefSteps.filter(step => !step.when || step.when(a));
+// Keep the question bank available, but only ask what is needed for a first conversation.
+const shortFields: Record<string, string[]> = {
+ route: ['route'], business: ['company', 'niche', 'business'], template: ['template'],
+ goal: ['goal', 'format'], commerce: ['count', 'shopFeatures'], terms: ['timing', 'date', 'budget'],
+ contact: ['name', 'phone', 'channel', 'handle'],
+};
+export const stepLabels: Record<string, string> = { route: 'Подход', business: 'Бизнес', template: 'Макет', goal: 'Задача сайта', commerce: 'Товары и покупка', terms: 'Сроки и бюджет', contact: 'Контакты' };
+export const getSteps = (a: Answers) => briefSteps.filter(step => shortFields[step.id] && (!step.when || step.when(a))).map(step => ({
+ ...step,
+ hint: step.id === 'route' ? 'Пять коротких шагов. Выберите вариант или пропустите — детали обсудим лично.' : step.id === 'business' ? 'Название и сфера помогут нам понять вашу задачу.' : step.hint,
+ fields: step.fields.filter(field => shortFields[step.id].includes(field.id)).map(field => field.id === 'business' ? { ...field, label: 'Расскажите о вашей сфере', when: (answers: Answers) => value(answers, 'niche') === 'Другая сфера' } : field),
+}));
 export const getFields = (step: BriefStep, a: Answers) => step.fields.filter(field => !field.when || field.when(a));
 export function cleanAnswers(input: Answers): Answers {
  const clean: Answers = {};
@@ -93,8 +104,7 @@ export function suggest(a: Answers) {
  const selected = value(a, 'format');
  const format = !custom(a) ? 'Адаптация готового макета' : selected && selected !== 'Нужен совет' ? selected : value(a, 'goal') === 'Продавать товары' ? 'Каталог или интернет-магазин' : value(a, 'goal') === 'Получать заявки' ? 'Лендинг' : 'Формат уточним на консультации';
  const complex = isShop(a) || ['Личный кабинет', 'Калькулятор'].some(f => has(a, 'features', f)) || has(a, 'integrations', 'CRM');
- const missing = ['company', 'business', 'phone'].filter(k => !value(a, k)).map(k => ({ company: 'название проекта', business: 'описание бизнеса', phone: 'контактный телефон' })[k]);
- for (const [id, label] of [['logo', 'логотип и стиль'], ['photos', 'фотографии'], ['texts', 'тексты']]) if (!value(a, id) || /помощь|часть|позже/.test(value(a, id))) missing.push(label);
+ const missing = ['company', 'niche', 'phone'].filter(k => !value(a, k)).map(k => ({ company: 'название проекта', niche: 'сфера бизнеса', phone: 'контактный телефон' })[k]);
  if (isShop(a) && !(a.shopFeatures as string[] | undefined)?.length) missing.push('сценарий заказа, оплаты и доставки');
  if (value(a, 'budget').startsWith('Адаптация') && custom(a)) missing.push('бюджет адаптации выбран для индивидуального проекта');
  const blocks = Array.isArray(a.sections) && a.sections.length ? ['Первый экран с предложением', ...a.sections] : !custom(a) ? ['Сохраняем блоки выбранного макета'] : ['Первый экран с предложением', isCatalog(a) ? 'Каталог и карточки' : 'Услуги или предложение', 'Подтверждение качества — при наличии материалов', 'Контакты и целевое действие'];

@@ -45,7 +45,7 @@ test('chat supports template path, keyboard, skip and local download', async ({ 
  await expect(chat.getByRole('heading', { name: 'Какой макет возьмём за основу?' })).toBeFocused();
  await chat.getByRole('radio', { name: 'ФОРМА — Частный мастер' }).check();
  await chat.getByRole('button', { name: 'Продолжить →', exact: true }).click();
- await expect(chat.getByRole('heading', { name: 'Что уже есть для старта?' })).toBeVisible();
+ await expect(chat.getByRole('heading', { name: 'На какой запуск ориентируемся?' })).toBeVisible();
  await chat.getByRole('button', { name: 'Сразу к контактам' }).click();
  await chat.getByLabel('Телефон', { exact: true }).fill('123');
  await chat.getByRole('button', { name: 'Посмотреть мой бриф' }).click();
@@ -65,12 +65,13 @@ test('shop questions, backtracking and skip work on a phone', async ({ page }) =
  await chat.getByRole('button', { name: 'Пропустить шаг', exact: true }).click();
  await chat.getByRole('radio', { name: 'Интернет-магазин', exact: true }).check();
  await chat.getByRole('button', { name: 'Продолжить →', exact: true }).click();
- await chat.getByRole('button', { name: 'Пропустить шаг', exact: true }).click();
  await expect(chat.getByRole('heading', { name: 'Уточним детали каталога' })).toBeVisible();
  await chat.getByRole('checkbox', { name: 'Онлайн-оплата', exact: true }).check();
  await chat.getByRole('button', { name: 'Продолжить →', exact: true }).click();
- await chat.getByRole('button', { name: /С чего начнём ваш сайт/ }).click();
+ await chat.locator('.brief-project > summary').click();
+ await chat.getByRole('button', { name: 'Изменить: Подход', exact: true }).click();
  await chat.getByRole('radio', { name: 'Готовый макет', exact: true }).check();
+ await chat.getByRole('button', { name: 'Сохранить изменения', exact: true }).click();
  await chat.getByRole('button', { name: 'Сохранить и закончить' }).click();
  await chat.getByText('Все ответы и описание проекта', { exact: true }).click();
  await expect(chat.locator('.brief-summary')).not.toContainText('Онлайн-оплата');
@@ -86,4 +87,30 @@ test('brief stays readable at narrow widths and reduced motion', async ({ page }
   expect(await page.locator('.brief-question').evaluate(el => getComputedStyle(el).animationName)).toBe('none');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
  }
+});
+
+test('compact project summary supports editing, cancelling and returning to review', async ({ page }) => {
+ await page.setViewportSize({ width: 390, height: 844 }); await page.goto('/#brief');
+ const chat = page.locator('#brief');
+ await expect(chat.locator('.brief-top')).toContainText('из 5');
+ await chat.getByRole('button', { name: 'Продолжить →', exact: true }).click();
+ await chat.getByLabel('Название компании или проекта').fill('Кофейня');
+ await chat.getByRole('radio', { name: 'Кафе и еда', exact: true }).check();
+ await chat.getByRole('button', { name: 'Сохранить и закончить' }).click();
+ await chat.locator('.brief-project > summary').click();
+ await expect(chat.locator('.brief-project dd')).toContainText(['Кофейня', 'Кафе и еда']);
+ await chat.getByRole('button', { name: 'Изменить: Бизнес', exact: true }).click();
+ await chat.getByLabel('Название компании или проекта').fill('Пекарня');
+ await chat.getByRole('button', { name: 'Отменить изменения', exact: true }).click();
+ await expect(chat.getByRole('heading', { name: 'Вот что получилось' })).toBeVisible();
+ await chat.locator('.brief-project > summary').click();
+ await expect(chat.locator('.brief-project dd').first()).toHaveText('Кофейня');
+ await chat.getByRole('button', { name: 'Изменить: Бизнес', exact: true }).click();
+ await chat.getByLabel('Название компании или проекта').fill('Пекарня');
+ await chat.getByRole('button', { name: 'Сохранить изменения', exact: true }).click();
+ await expect(chat.getByRole('heading', { name: 'Вот что получилось' })).toBeVisible();
+ await chat.locator('.brief-project > summary').click();
+ await expect(chat.locator('.brief-project dd').first()).toHaveText('Пекарня');
+ await expect(chat.locator('.brief-reply')).toHaveCount(0);
+ await chat.locator('.brief-project').screenshot({ path: '.taste-skill/brief/390-project-edited.png' });
 });
