@@ -1,4 +1,36 @@
 import { test, expect } from '@playwright/test';
+test('contact form validates a phone and honestly reports demo submission', async ({ page }) => {
+ await page.goto('/');
+ const form = page.getByRole('form', { name: 'Обсудить сайт' });
+ const phone = form.getByRole('textbox', { name: 'Ваш телефон' });
+ const submit = form.getByRole('button', { name: 'Дать сайту старт' });
+ await expect(submit).toBeEnabled();
+ for (const [value, error] of [
+  ['', 'Укажите номер'],
+  ['123', 'слишком короткий'],
+  ['+7 номер 999', 'Используйте цифры'],
+  ['7999+1234567', 'Плюс допустим только в начале'],
+  ['1234567890123456', 'слишком длинный'],
+  ['00000000000', 'повторяющейся цифры'],
+ ]) {
+  await phone.fill(value);
+  await submit.click();
+  await expect(phone).toBeFocused();
+  await expect(phone).toHaveAttribute('aria-invalid', 'true');
+  await expect(form.getByRole('alert')).toContainText(error);
+  expect(await phone.evaluate(el => (el as HTMLInputElement).validity.valid)).toBe(false);
+  await expect(form.getByRole('status')).toBeEmpty();
+ }
+ for (const value of ['+7 (999) 123-45-67', '8 999 123 45 67', '9991234567', '+44 20 7946 0958']) {
+  await phone.fill(value);
+  await expect(phone).not.toHaveAttribute('aria-invalid', 'true');
+  await phone.press('Enter');
+  await expect(form.getByRole('status')).toContainText('Номер не отправлен');
+ }
+ await expect(page).toHaveURL('/');
+ await phone.fill('+7 999 123 45 68');
+ await expect(form.getByRole('status')).toBeEmpty();
+});
 test('responsive homepage, working anchors and no browser errors', async ({ page }) => {
  const errors: string[]=[]; page.on('pageerror',e=>errors.push(e.message));
  for(const width of [320,375,768,1440]) {
@@ -35,8 +67,9 @@ test('concept images load, reduced motion preserves content and pricing stays vi
   await expect(image).toBeVisible();
   await expect.poll(()=>image.evaluate(el=>(el as HTMLImageElement).complete && (el as HTMLImageElement).naturalWidth>0)).toBe(true);
  }
- await expect(page.locator('#services')).toContainText('7');
- await expect(page.locator('#contacts')).toContainText('Контакты студии ещё не подключены');
+ await expect(page.locator('#services .service-price').first()).toHaveText('2 000 ₽');
+ await expect(page.locator('#contacts')).toContainText('Отправляя форму, вы даёте согласие на обработку персональных данных.');
+ await expect(page.locator('#contacts')).not.toContainText('Контакты студии ещё не подключены');
  await page.getByRole('tab',{name:'Кофейня',exact:true}).focus();await page.keyboard.press('Home');
  await expect(page.getByRole('tab',{name:'Кофейня',exact:true})).toHaveAttribute('aria-selected','true');
 });

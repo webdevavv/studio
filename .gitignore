@@ -7,3 +7,9 @@ playwright-report/
 test-results/
 .taste-skill/before/
 .taste-skill/after/
+.taste-skill/catalog/
+.taste-skill/catalog-final/
+.taste-skill/catalog-detail/
+.taste-skill/catalog-detail-final/
+.taste-skill/header/
+.taste-skill/blog*/
