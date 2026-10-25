@@ -48,8 +48,9 @@ test('keyboard tabs, mobile navigation and FAQ',async({page})=>{
  await expect(page.getByRole('tab',{name:'Салон красоты'})).toBeFocused();
  await expect(page.getByRole('tabpanel')).toContainText('Время, которое');
  await page.keyboard.press('End'); await expect(page.getByRole('tabpanel')).toContainText('Дерево. Руки.');
- await page.getByRole('button',{name:'Меню'}).click(); await page.getByRole('navigation').getByRole('link',{name:'Услуги',exact:true}).click();
- await expect(page.getByRole('button',{name:'Меню'})).toHaveAttribute('aria-expanded','false');
+ await page.locator('.header').getByRole('link',{name:'Заказать сайт',exact:true}).click();
+ await expect(page).toHaveURL(/#brief$/);
+ await expect(page.locator('.header nav,.header button')).toHaveCount(0);
  await page.locator('summary').first().click(); await expect(page.locator('details').first()).toHaveAttribute('open','');
  await page.screenshot({path:'/tmp/studio-mobile.png',fullPage:true});
 });

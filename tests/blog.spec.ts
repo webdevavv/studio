@@ -56,22 +56,22 @@ test('blog and the persistent mobile request button fit all viewports', async ({
   }
   if (width <= 1100) {
    await page.evaluate(() => scrollTo(0, 1200));
-   const cta = page.getByRole('link', { name: 'Оставить заявку', exact: true });
+   const cta = page.getByRole('link', { name: 'Заказать сайт', exact: true });
    await expect(cta).toBeVisible();
    const box = await cta.boundingBox();
    expect(box!.y).toBeGreaterThanOrEqual(0);
    expect(box!.y + box!.height).toBeLessThanOrEqual(90);
-   await expect(cta).toHaveAttribute('href', '/#contacts');
+   await expect(cta).toHaveAttribute('href', '/#brief');
   }
  }
  await page.setViewportSize({ width: 320, height: 844 });
  await page.goto('/catalog/coffee');
- const cta = page.getByRole('link', { name: 'Оставить заявку', exact: true });
+ const cta = page.getByRole('link', { name: 'Заказать сайт', exact: true });
  await expect(cta).toHaveAttribute('href', '#request');
  await cta.click();
  await expect(page).toHaveURL(/#request$/);
- await page.getByRole('button', { name: 'Меню', exact: true }).click();
+
  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
  await expect(cta).toBeVisible();
- await expect(page.getByRole('button', { name: 'Закрыть ×', exact: true })).toBeVisible();
+ await expect(page.locator('.header nav,.header button')).toHaveCount(0);
 });

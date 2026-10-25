@@ -14,8 +14,8 @@ test('catalog filters combine, reset and preserve selection through navigation',
  await expect(page.locator('.catalog-item')).toHaveCount(3);
  await page.getByLabel('Найти макет').fill('тише');
  await page.getByRole('button', { name: 'Показать макеты' }).click();
- await expect(page.locator('.catalog-item h3')).toHaveText('ТИШЕ');
- await page.getByRole('link', { name: 'Рассмотреть макет ↗' }).click();
+ await expect(page.locator('.catalog-item h3')).toHaveText(['ТИШЕ']);
+ await page.getByRole('link', { name: 'Рассмотреть макет' }).click();
  await expect(page).toHaveURL(/\/catalog\/beauty$/);
  await expect(page.locator('h1')).toHaveText('ТИШЕ');
  await page.goBack();
@@ -65,13 +65,8 @@ test('catalog and template pages fit phones and desktops with working mobile nav
   }
  }
  await page.setViewportSize({ width: 390, height: 844 });
- await page.getByRole('button', { name: 'Меню', exact: true }).click();
- const navigation = page.getByRole('navigation', { name: 'Основная навигация', includeHidden: true });
- const catalogLink = navigation.getByRole('link', { name: 'Каталог', exact: true });
- await catalogLink.focus();
- await page.keyboard.press('Escape');
- await expect(page.getByRole('button', { name: 'Меню', exact: true })).toBeFocused();
- await expect(navigation).toBeHidden();
+ await expect(page.locator('.header nav,.header button')).toHaveCount(0);
+ await expect(page.locator('.header').getByRole('link', { name: 'Заказать сайт', exact: true })).toHaveAttribute('href', '#request');
  expect(errors).toEqual([]);
 });
 

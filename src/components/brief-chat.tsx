@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 import { useEffect, useRef, useState } from 'react';
 import { answerError, cleanAnswers, getFields, getSteps, stepLabels, summary, suggest, value, type Answers } from '@/lib/brief';
@@ -76,7 +77,7 @@ export function BriefChat({ enabled = false, policyUrl = '' }: { enabled?: boole
  }
 
  return <section id="brief" className="section brief-section" aria-labelledby="brief-title">
-  <div className="brief-intro"><h2 id="brief-title">Давайте соберём<br/>ваш сайт</h2><p>Несколько ответов — и вместо чистого листа у вас понятный бриф. Выбирайте варианты, пишите своими словами или пропускайте.</p><a className="text-link" href="#contacts">Нужен только звонок? Оставить телефон ↗</a></div>
+  <div className="brief-intro"><h2 id="brief-title">Давайте соберём<br/>ваш сайт</h2><p>Несколько ответов — и вместо чистого листа у вас понятный бриф. Выбирайте варианты, пишите своими словами или пропускайте.</p></div>
   <div className="brief-frame" data-ui="brief" ref={panel}>
    <div className="brief-top"><strong>Бриф в диалоге</strong><span>{review ? 'Проверка ответов' : `Шаг ${index + 1} из ${steps.length}`}</span></div>
    <progress className="brief-progress" value={progress} max={100} aria-label="Прогресс брифа"/>
@@ -88,14 +89,14 @@ export function BriefChat({ enabled = false, policyUrl = '' }: { enabled?: boole
       <div className="brief-advice"><strong>{advice.format}</strong><p>{advice.reason}</p><p>{advice.assessment}</p>{advice.missing.length > 0 && <p>Ещё уточним: {advice.missing.join(', ')}.</p>}</div>
       <details><summary>Все ответы и описание проекта</summary><pre className="brief-summary">{summary(cleaned)}</pre></details>
       <div className="brief-actions"><button type="button" className="brief-secondary" disabled={status !== 'idle'} onClick={() => edit('contact')}>Изменить контакты</button><button type="button" className="brief-secondary" onClick={download}>Скачать бриф</button></div>
-      {enabled ? <><label className="brief-consent"><input type="checkbox" checked={consent} disabled={status !== 'idle'} onChange={e => setConsent(e.target.checked)}/><span>Я даю согласие на обработку указанных персональных данных для рассмотрения заявки и связи со мной. <a href={policyUrl} target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a></span></label><button type="button" className="button" disabled={status !== 'idle'} onClick={send}>{status === 'sending' ? 'Передаём бриф…' : status === 'uncertain' ? 'Получение требует проверки' : 'Передать мой проект'}</button></> : <p className="brief-muted">Бриф готов к сохранению. Приём заявок пока не подключён — ответы не отправлены.</p>}
+      {enabled ? <><label className="brief-consent"><input type="checkbox" checked={consent} disabled={status !== 'idle'} onChange={e => setConsent(e.target.checked)}/><span>Я даю согласие на обработку указанных персональных данных для рассмотрения заявки и связи со мной. <Link href={policyUrl} target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</Link></span></label><button type="button" className="button" disabled={status !== 'idle'} onClick={send}>{status === 'sending' ? 'Передаём бриф…' : status === 'uncertain' ? 'Получение требует проверки' : 'Передать мой проект'}</button></> : <p className="brief-muted">Бриф готов к сохранению. Приём заявок пока не подключён — ответы не отправлены.</p>}
      </div> : <form key={current} className="brief-question" noValidate onSubmit={e => { e.preventDefault(); next(); }} onKeyDown={e => {
       if (e.nativeEvent.isComposing) return;
       if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); next(); }
       else if (e.key === 'Enter' && e.target instanceof HTMLInputElement && !['radio', 'checkbox'].includes(e.target.type)) { e.preventDefault(); next(); }
      }}>
       <div className="brief-speaker">Помощник студии</div><h3 ref={heading} tabIndex={-1}>{step.title}</h3><p className="brief-question-hint">{step.hint}</p>
-      {step.id === 'template' && <a href="/catalog" target="_blank" rel="noopener noreferrer" className="text-link">Посмотреть макеты в новой вкладке ↗</a>}
+      {step.id === 'template' && <Link href="/catalog" target="_blank" rel="noopener noreferrer" className="text-link">Посмотреть макеты в новой вкладке</Link>}
       <fieldset className="brief-fields" disabled={!ready || status !== 'idle'}><legend className="sr-only">{step.title}</legend>
        {getFields(step, answers).map(field => <div className="brief-field" key={field.id}>
         {field.options ? <fieldset><legend>{field.label}</legend><div className="brief-choices">{field.options.map(option => {

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Header } from '@/components/header';
@@ -22,17 +23,17 @@ export default async function ArticlePage({ params }: Props) {
  const post = await getPost((await params).slug);
  if (!post) notFound();
  const others = (await getPosts()).filter(item => item.slug !== post.slug).slice(0, 2);
- return <><a className="skip-link" href="#main">К содержимому</a><div className="shell" id="top"><Header home={false} section="blog"/>
+ return <><Link className="skip-link" href="#main">К содержимому</Link><div className="shell" id="top"><Header home={false} section="blog"/>
   <main id="main" className="article-page">
-   <nav className="blog-back" aria-label="Навигация по блогу"><a className="text-link" href="/blog#articles">← Все статьи</a></nav>
+   <nav className="blog-back" aria-label="Навигация по блогу"><Link className="text-link" href="/blog#articles">← Все статьи</Link></nav>
    <article>
     <header className="article-heading"><h1>{post.title}</h1><p className="article-description">{post.description}</p><div className="article-meta"><span>{post.category}</span><time dateTime={post.date}>{formatPostDate(post.date)}</time><span>{post.readingMinutes} мин. чтения</span></div></header>
     <div className="article-layout">
-     {post.toc.length > 0 && <aside className="article-sidebar"><nav aria-label="Содержание статьи"><details open><summary>В этой статье <span aria-hidden="true">↕</span></summary><ol>{post.toc.map(item => <li key={item.id} className={item.level === 3 ? 'toc-subheading' : undefined}><a href={`#${item.id}`}>{item.text}</a></li>)}</ol></details></nav><a className="text-link" href="/catalog">Выбрать дизайн сайта ↗</a></aside>}
+     {post.toc.length > 0 && <aside className="article-sidebar"><nav aria-label="Содержание статьи"><details open><summary>В этой статье <span aria-hidden="true">↕</span></summary><ol>{post.toc.map(item => <li key={item.id} className={item.level === 3 ? 'toc-subheading' : undefined}><Link href={`#${item.id}`}>{item.text}</Link></li>)}</ol></details></nav><Link className="text-link" href="/catalog">Выбрать дизайн сайта</Link></aside>}
      <div className="article-body" dangerouslySetInnerHTML={{ __html: post.html }}/>
     </div>
    </article>
-   {others.length > 0 && <section className="blog-related" aria-labelledby="related-title"><h2 id="related-title">Ещё по делу</h2><div>{others.map(item => <article key={item.slug}><h3><a href={`/blog/${item.slug}`}>{item.title}</a></h3><p>{item.description}</p><a href={`/blog/${item.slug}`} className="text-link" aria-label={`Читать: ${item.title}`}>Читать статью ↗</a></article>)}</div></section>}
+   {others.length > 0 && <section className="blog-related" aria-labelledby="related-title"><h2 id="related-title">Ещё по делу</h2><div>{others.map(item => <article key={item.slug}><h3><Link href={`/blog/${item.slug}`}>{item.title}</Link></h3><p>{item.description}</p><Link href={`/blog/${item.slug}`} className="text-link" aria-label={`Читать: ${item.title}`}>Читать статью</Link></article>)}</div></section>}
   </main><BlogFooter/>
  </div></>;
 }

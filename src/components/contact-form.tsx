@@ -26,7 +26,7 @@ export function ContactForm() {
    input.focus();
    return;
   }
-  setMessage('Это демонстрационная форма. Номер не отправлен: приём заявок ещё не подключён.');
+  setMessage('Номер не отправлен: приём заявок ещё не подключён.');
  }}>
   <label htmlFor="contact-phone">Ваш телефон</label>
   <div className="contact-form-row">
