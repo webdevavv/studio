@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { site } from '@/lib/site';
-const links = [['services', 'Услуги'], ['projects', 'Работы'], ['process', 'Процесс'], ['about', 'О студии']];
+const links = [['services', 'Услуги'], ['projects', 'Работы'], ['process', 'Процесс'], ['about', 'О студии'], ['brief', 'Бриф']];
 export function Header({ home = true, section = 'catalog', requestHref }: { home?: boolean; section?: 'catalog' | 'blog'; requestHref?: string }) {
  const [open, setOpen] = useState(false); const [active, setActive] = useState('');
  const requestLink = requestHref || `${home ? '' : '/'}#contacts`;
