@@ -65,7 +65,8 @@ test('catalog and template pages fit phones and desktops with working mobile nav
   }
  }
  await page.setViewportSize({ width: 390, height: 844 });
- await expect(page.locator('.header nav,.header button')).toHaveCount(0);
+ await page.getByRole('button', { name: 'Меню', exact: true }).click();
+ await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible();
  await expect(page.locator('.header').getByRole('link', { name: 'Заказать сайт', exact: true })).toHaveAttribute('href', '#request');
  expect(errors).toEqual([]);
 });

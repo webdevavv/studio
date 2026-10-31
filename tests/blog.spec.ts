@@ -61,7 +61,7 @@ test('blog and the persistent mobile request button fit all viewports', async ({
    const box = await cta.boundingBox();
    expect(box!.y).toBeGreaterThanOrEqual(0);
    expect(box!.y + box!.height).toBeLessThanOrEqual(90);
-   await expect(cta).toHaveAttribute('href', '/#brief');
+   await expect(cta).toHaveAttribute('href', '/#contacts');
   }
  }
  await page.setViewportSize({ width: 320, height: 844 });
@@ -73,5 +73,6 @@ test('blog and the persistent mobile request button fit all viewports', async ({
 
  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
  await expect(cta).toBeVisible();
- await expect(page.locator('.header nav,.header button')).toHaveCount(0);
+ await page.getByRole('button', { name: 'Меню', exact: true }).click();
+ await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible();
 });

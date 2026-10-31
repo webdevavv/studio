@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-const phrases = ['За 2 дня.', 'Под задачу.', 'С характером.'];
+const phrases = ['за 2 дня', 'под ключ', 'под вашу задачу'];
 
 export function HeroTypewriter() {
  const [text, setText] = useState(phrases[0]);
@@ -39,5 +39,5 @@ export function HeroTypewriter() {
   document.addEventListener('visibilitychange', resume);
   return () => { cancel(); observer.disconnect(); motion.removeEventListener('change', resume); document.removeEventListener('visibilitychange', resume); };
  }, []);
- return <span className="hero-timing hero-typewriter" ref={element}><span aria-hidden="true">{text}<span className="typewriter-caret"/></span><span className="sr-only">За 2 дня. Под вашу задачу и с вашим характером.</span></span>;
+ return <span className="hero-timing hero-typewriter" ref={element}><span aria-hidden="true">{text}</span><span className="sr-only">за 2 дня</span></span>;
 }

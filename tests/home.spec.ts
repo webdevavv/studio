@@ -1,76 +1,63 @@
 import { test, expect } from '@playwright/test';
-test('contact form validates a phone and honestly reports demo submission', async ({ page }) => {
- await page.goto('/');
- const form = page.getByRole('form', { name: 'Обсудить сайт' });
- const phone = form.getByRole('textbox', { name: 'Ваш телефон' });
- const submit = form.getByRole('button', { name: 'Дать сайту старт' });
- await expect(submit).toBeEnabled();
- for (const [value, error] of [
-  ['', 'Укажите номер'],
-  ['123', 'слишком короткий'],
-  ['+7 номер 999', 'Используйте цифры'],
-  ['7999+1234567', 'Плюс допустим только в начале'],
-  ['1234567890123456', 'слишком длинный'],
-  ['00000000000', 'повторяющейся цифры'],
- ]) {
-  await phone.fill(value);
-  await submit.click();
-  await expect(phone).toBeFocused();
-  await expect(phone).toHaveAttribute('aria-invalid', 'true');
-  await expect(form.getByRole('alert')).toContainText(error);
-  expect(await phone.evaluate(el => (el as HTMLInputElement).validity.valid)).toBe(false);
-  await expect(form.getByRole('status')).toBeEmpty();
+
+test('contact form validates phone and never pretends disabled integration sent it', async ({ page }) => {
+ await page.goto('/'); const form = page.getByRole('form', { name: 'Заявка на сайт' });
+ const phone = form.getByLabel('Номер телефона'); const submit = form.getByRole('button', { name: 'Отправить заявку' });
+ for (const [value, error] of [['', 'Укажите номер'], ['123', 'слишком короткий'], ['+7 номер 999', 'Используйте цифры'], ['7999+1234567', 'Плюс допустим'], ['1234567890123456', 'слишком длинный'], ['00000000000', 'повторяющейся цифры']]) {
+  await phone.fill(value); await submit.click(); await expect(phone).toBeFocused(); await expect(phone).toHaveAttribute('aria-invalid', 'true'); await expect(form.getByRole('alert')).toContainText(error);
  }
- for (const value of ['+7 (999) 123-45-67', '8 999 123 45 67', '9991234567', '+44 20 7946 0958']) {
-  await phone.fill(value);
-  await expect(phone).not.toHaveAttribute('aria-invalid', 'true');
-  await phone.press('Enter');
-  await expect(form.getByRole('status')).toContainText('Номер не отправлен');
- }
- await expect(page).toHaveURL('/');
- await phone.fill('+7 999 123 45 68');
- await expect(form.getByRole('status')).toBeEmpty();
+ await phone.fill('+7 999 123 45 67'); await submit.click();
+ await expect(phone).not.toHaveAttribute('aria-invalid', 'true');
+ if (!process.env.TEST_REQUESTS_ENABLED) await expect(form.getByRole('status')).toContainText('Заявка не отправлена');
 });
-test('responsive homepage, working anchors and no browser errors', async ({ page }) => {
- const errors: string[]=[]; page.on('pageerror',e=>errors.push(e.message));
- for(const width of [320,375,768,1440]) {
-  await page.setViewportSize({width,height:900}); await page.goto('/');
+
+test('all twelve sections, responsive geometry, working anchors and no browser errors', async ({ page }) => {
+ const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
+ for (const width of [320,375,430,768,1024,1440,1920]) {
+  await page.setViewportSize({ width, height: 900 }); await page.goto('/'); await page.evaluate(async () => { await document.fonts.ready; });
   await expect(page.locator('h1')).toHaveCount(1);
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  for(const href of await page.locator('a[href^="#"]').evaluateAll(els=>els.map(el=>el.getAttribute('href')!))) expect(await page.locator(href).count()).toBe(1);
+  if (width === 320) { const logo = await page.locator('.header .logo').boundingBox(); const menu = await page.locator('.header .menu-toggle').boundingBox(); expect(Math.abs(logo!.y + logo!.height / 2 - menu!.y - menu!.height / 2)).toBeLessThan(2); }
+  await expect(page.locator('main>section')).toHaveCount(12);
+  expect(await page.locator('main>section').evaluateAll(els => els.map(el => el.id))).toEqual(['','why','services','projects','pricing','approach','included','process','payment','about','faq','contacts']);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  for (const href of await page.locator('a[href^="#"]').evaluateAll(els => els.map(el => el.getAttribute('href')!))) expect(await page.locator(href).count()).toBe(1);
+  const overflowing = await page.locator('main :is(h1,h2,h3,p,button,input,select,textarea)').evaluateAll(els => els.filter(el => { const r = el.getBoundingClientRect(); return r.width > 2 && (r.left < -1 || r.right > innerWidth + 1); }).map(el => el.textContent?.slice(0,80)));
+  expect(overflowing).toEqual([]);
+  if ([320,768,1440].includes(width)) await page.locator('#contacts').screenshot({ path: `.taste-skill/home-refresh/form-${width}.png`, animations: 'disabled' });
+  await page.locator('.hero').screenshot({ path: `.taste-skill/home-refresh/hero-${width}.png`, animations: 'disabled' });
  }
  expect(errors).toEqual([]);
- await page.screenshot({path:'/tmp/studio-desktop.png',fullPage:true});
+ await page.screenshot({ path: '.taste-skill/home-refresh/full-desktop.png', fullPage: true, animations: 'disabled' });
 });
-test('keyboard tabs, mobile navigation and FAQ',async({page})=>{
- await page.setViewportSize({width:375,height:812}); await page.goto('/');
- await page.getByRole('tab',{name:'Кофейня',exact:true}).focus(); await page.keyboard.press('ArrowRight');
- await expect(page.getByRole('tab',{name:'Салон красоты'})).toBeFocused();
- await expect(page.getByRole('tabpanel')).toContainText('Время, которое');
+
+test('tabs, mobile navigation and FAQ work with the keyboard', async ({ page }) => {
+ await page.setViewportSize({ width: 375, height: 812 }); await page.goto('/');
+ await page.getByRole('tab', { name: 'Кофейня', exact: true }).focus(); await page.keyboard.press('ArrowRight'); await expect(page.getByRole('tab', { name: 'Салон красоты' })).toBeFocused();
  await page.keyboard.press('End'); await expect(page.getByRole('tabpanel')).toContainText('Дерево. Руки.');
- await page.locator('.header').getByRole('link',{name:'Заказать сайт',exact:true}).click();
- await expect(page).toHaveURL(/#brief$/);
- await expect(page.locator('.header nav,.header button')).toHaveCount(0);
- await page.locator('summary').first().click(); await expect(page.locator('details').first()).toHaveAttribute('open','');
- await page.screenshot({path:'/tmp/studio-mobile.png',fullPage:true});
+ const menu = page.getByRole('button', { name: 'Меню', exact: true }); await menu.click(); await expect(menu).toHaveAttribute('aria-expanded', 'true');
+ await page.getByRole('navigation', { name: 'Основная навигация' }).getByRole('link', { name: 'Цены', exact: true }).focus(); await page.keyboard.press('Escape'); await expect(menu).toBeFocused(); await expect(menu).toHaveAttribute('aria-expanded', 'false');
+ await page.locator('.header').getByRole('link', { name: 'Заказать сайт', exact: true }).click(); await expect(page).toHaveURL(/#contacts$/);
+ const summary = page.locator('.faq summary').first(); await summary.focus(); await page.keyboard.press('Enter'); await expect(page.locator('.faq details').first()).toHaveAttribute('open', '');
+ await page.screenshot({ path: '.taste-skill/home-refresh/full-mobile.png', fullPage: true, animations: 'disabled' });
 });
-test('SSR content, demo indexing and real 404',async({browser,request})=>{
- const context=await browser.newContext({javaScriptEnabled:false});const page=await context.newPage();await page.goto('/');
- await expect(page.locator('h1')).toContainText('За 2 дня.');await expect(page.getByRole('tabpanel')).toContainText('Хороший день'); await context.close();
- expect(await (await request.get('/robots.txt')).text()).toContain('Disallow: /');
- expect((await request.get('/missing-page')).status()).toBe(404);
+
+test('SSR, metadata, demo indexing and 404 stay correct', async ({ browser, request }) => {
+ const context = await browser.newContext({ javaScriptEnabled: false }); const page = await context.newPage(); await page.goto('/');
+ await expect(page.locator('h1')).toHaveText('Создадим современный сайт для вашего бизнеса за 2 дня'); await expect(page.getByRole('tabpanel')).toContainText('Хороший день');
+ await expect(page.locator('main>section')).toHaveCount(12); await expect(page).toHaveTitle('Создание сайтов под ключ от 7 000 ₽ — за 2 дня');
+ expect(await page.locator('meta[name=description]').getAttribute('content')).toContain('Создадим лендинг');
+ expect(await page.locator('meta[property="og:title"]').getAttribute('content')).toContain('Создание сайтов под ключ');
+ await expect(page.getByRole('form', { name: 'Заявка на сайт' }).getByRole('button')).toBeDisabled();
+ await context.close(); expect(await (await request.get('/robots.txt')).text()).toContain('Disallow: /'); expect((await request.get('/missing-page')).status()).toBe(404);
 });
-test('concept images load, reduced motion preserves content and pricing stays visible',async({page})=>{
- await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/');
- for(const name of ['Кофейня','Салон красоты','Частный мастер']){
-  await page.getByRole('tab',{name,exact:true}).click();
-  const image=page.getByRole('tabpanel').locator('img');
-  await expect(image).toBeVisible();
-  await expect.poll(()=>image.evaluate(el=>(el as HTMLImageElement).complete && (el as HTMLImageElement).naturalWidth>0)).toBe(true);
+
+test('project images, demo labels and honest pricing remain visible', async ({ page }) => {
+ await page.emulateMedia({ reducedMotion: 'reduce' }); await page.goto('/');
+ await expect(page.locator('.brief-question,.brief-frame')).toHaveCount(0);
+ for (const name of ['Кофейня','Салон красоты','Частный мастер']) {
+  await page.getByRole('tab', { name, exact: true }).click(); const image = page.getByRole('tabpanel').locator('img');
+  await expect.poll(() => image.evaluate(el => (el as HTMLImageElement).complete && (el as HTMLImageElement).naturalWidth > 0)).toBe(true);
  }
- await expect(page.locator('#services .service-price').first()).toHaveText('2 000 ₽');
- await expect(page.locator('#contacts')).toContainText('Отправляя форму, вы даёте согласие на обработку персональных данных.');
- await expect(page.locator('#contacts')).not.toContainText('Контакты студии ещё не подключены');
- await page.getByRole('tab',{name:'Кофейня',exact:true}).focus();await page.keyboard.press('Home');
- await expect(page.getByRole('tab',{name:'Кофейня',exact:true})).toHaveAttribute('aria-selected','true');
+ await expect(page.locator('#projects')).toContainText('Демо-проект'); await expect(page.locator('#pricing .price-value').first()).toHaveText('2 000 ₽');
+ await expect(page.locator('#pricing .price-value').last()).toHaveText('7 000–10 000 ₽'); await expect(page.locator('.faq details')).toHaveCount(10);
 });

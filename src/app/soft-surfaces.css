@@ -1,39 +1,30 @@
 /* Shared geometry for the studio; miniature website designs keep their own style. */
 :root{--radius-section:28px;--radius-card:20px;--radius-control:12px}
-.shell :is(.hero,.adaptation,.brief-frame,.contact,.process,.catalog-intro,.catalog-process,.template-request,.blog-intro,.blog-catalog-callout){border-radius:var(--radius-section)}
+.shell :is(.hero,.adaptation,.contact,.process,.catalog-intro,.catalog-process,.template-request,.blog-intro,.blog-catalog-callout){border-radius:var(--radius-section)}
 .shell :is(.service,.principle-sheets article,.steps li,.faq-list details,.project-picture,.catalog-image,.catalog-empty,.blog-entry,.blog-empty,.article-sidebar details,.article-body blockquote,.article-body pre){border-radius:var(--radius-card)}
 .shell :is(.catalog-filters,.blog-filters){border-radius:var(--radius-card)}
-.shell :is(.button,.header-cta,.mobile-header-cta,.menu-toggle,.preview-tabs button,.adaptation-controls button,.brief-secondary,.brief-choice){border-radius:var(--radius-control)}
-.shell :is(.catalog-field input,.catalog-field select,.blog-filters input,.blog-filters select,.request-field input,.request-field textarea,.contact-form input,.brief-field>input,.brief-field>textarea){border-radius:var(--radius-control)}
-.shell :is(.brief-sheet,.brief-project,.brief-advice,.brief-review details,.template-selection img,.template-preview>img,.article-body img){border-radius:var(--radius-control)}
-.shell .brief-project>summary{border-radius:var(--radius-control)}
-.shell .brief-project:not([open])>summary{box-shadow:none}
-.shell .brief-history{border-radius:var(--radius-control)}
+.shell :is(.catalog-field input,.catalog-field select,.blog-filters input,.blog-filters select,.request-field input,.request-field textarea,.contact-form input){border-radius:var(--radius-control)}
+.shell :is(.template-selection img,.template-preview>img,.article-body img){border-radius:var(--radius-control)}
 .shell :is(.roles li,.demo-notice){border-radius:var(--radius-control)}
 @media(max-width:600px){:root{--radius-section:20px;--radius-card:16px;--radius-control:10px}}
 @media(prefers-reduced-motion:no-preference){
- .shell :is(.button,.header-cta,.mobile-header-cta,.menu-toggle,.brief-secondary){transition:background-color .2s ease,color .2s ease}
+ .shell :is(.button,.header-cta,.mobile-header-cta,.menu-toggle){transition:background-color .2s ease,color .2s ease}
 }
+.shell :is(.button,.header-cta,.mobile-header-cta,.menu-toggle,.adaptation-controls button){border-radius:var(--radius-control)}
 /* Interaction feedback uses colour only, without movement or scaling. */
 .shell :is(a,button,summary,input,select,textarea){transition:background-color .2s ease,border-color .2s ease,color .2s ease}
 .shell .button{border:1px solid transparent}
 .shell .button:hover{background:#ed5b25;border-color:var(--ink)}
 .shell :is(.header-cta,.mobile-header-cta):hover{background:var(--accent);color:var(--ink);outline:1px solid var(--ink);outline-offset:-1px}
-.shell :is(.text-link,.secondary-link,.nav a:not(.header-cta),.footer-top a,.article-sidebar a,.article-body a):hover{background:var(--surface);text-decoration-thickness:1px}
-.shell :is(.menu-toggle,.brief-secondary,summary):hover{background:#c8e1ed;border-color:var(--ink)}
+.shell :is(.text-link,.secondary-link,.nav a:not(.header-cta),.article-sidebar a,.article-body a):hover{background:var(--surface);text-decoration-thickness:1px}
+.shell :is(.menu-toggle,summary):hover{background:#c8e1ed;border-color:var(--ink)}
 .shell :is(.catalog-image,.project-picture):hover{outline:2px solid #8caab8;outline-offset:-2px}
 .shell :is(input,select,textarea):hover{outline:1px solid #8caab8;outline-offset:-1px}
 .shell :is(input,select,textarea):focus-visible{outline:3px solid var(--ink);outline-offset:3px}
-.shell .brief-choice:hover{background:#c8e1ed;border-color:var(--ink)}
-.shell .brief-choice.selected:hover{background:#264455;color:var(--paper)}
 .shell .adaptation-controls button:hover{background:#304c5c;border-color:var(--paper)}
 .shell .adaptation-controls button[aria-pressed=true]:hover{background:#c8e1ed;color:var(--ink)}
-.shell .brief-navigation button:hover,.shell .brief-project-row button:hover{background:var(--surface)}
 .faq-plus:after{width:2px;height:20px;left:9px;top:0}
 .faq-list details[open] .faq-plus:after{height:0}
-.shell .brief-project-toggle{font-size:0}
-.brief-project-toggle:after{content:'+';font-size:24px}
-.brief-project[open] .brief-project-toggle:after{content:'−'}
 .shell .hero-workbench .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;max-width:460px}
 .shell .hero-workbench .actions .button{width:100%;min-height:56px;padding:14px 10px;text-align:center;font-size:14px;line-height:1.35}
 .shell .hero-workbench .hero-catalog-button{background:transparent;border-color:var(--ink);color:var(--ink)}
@@ -51,7 +42,6 @@
 .shell a.text-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:fit-content;max-width:100%;min-height:44px;padding:10px 16px;border:1px solid #b8d0dc;border-radius:var(--radius-control);background:var(--surface);color:var(--ink);font-size:var(--small);font-weight:500;line-height:1.45;text-decoration:none;text-align:center}
 .shell a.text-link:hover{background:#c8e1ed;border-color:#638a9e;text-decoration:none}
 .shell a.text-link:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
-.shell .brief-intro>a.text-link{justify-self:start}
 @media(max-width:600px){.shell a.text-link{padding:10px 14px}}
 .shell .footer-navigation{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;flex-basis:100%;margin-bottom:32px}
 .shell .footer-navigation>a{display:flex;flex-direction:column;justify-content:center;gap:10px;padding:28px 30px;border:1px solid transparent;border-radius:var(--radius-card);background:var(--accent);color:var(--ink);text-decoration:none}
@@ -61,3 +51,5 @@
 .shell .footer-navigation>a:hover{background:#ed5b25;border-color:var(--ink)}
 .shell .footer-navigation>a+ a:hover{background:#294758;border-color:#8caab8}
 @media(max-width:600px){.shell .footer-navigation{grid-template-columns:1fr;gap:12px;margin-bottom:24px}.shell .footer-navigation>a{padding:24px}}
+
+.shell footer .footer-top a:hover{background:transparent;color:var(--accent);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:6px}

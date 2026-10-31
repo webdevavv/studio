@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { site } from '@/lib/site';
 export function Header({ home = true, requestHref }: { home?: boolean; section?: 'catalog' | 'blog'; requestHref?: string }) {
- const requestLink = requestHref || `${home ? '' : '/'}#brief`;
+ const requestLink = requestHref || `${home ? '' : '/'}#contacts`;
  useEffect(() => {
   let compact = false;
   const update = () => {
@@ -19,5 +19,5 @@ export function Header({ home = true, requestHref }: { home?: boolean; section?:
    document.documentElement.removeAttribute('data-header-compact');
   };
  }, []);
- return <header className="header"><Link href={home ? '#top' : '/'} className="logo" aria-label={`${site.name} — главная`}>{site.name}</Link><Link href={requestLink} className="button header-order">Заказать сайт</Link></header>;
+ return <header className="header"><Link href={home ? '#top' : '/'} className="logo" aria-label={`${site.name} — главная`}>{site.name}</Link><div className="header-actions"><Link href="/catalog" className="button header-catalog">Каталог</Link><Link href={requestLink} className="button header-order">Заказать сайт</Link></div></header>;
 }

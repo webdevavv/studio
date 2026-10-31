@@ -1,116 +1,74 @@
 import { test, expect } from '@playwright/test';
-import { cleanAnswers, getSteps, summary, yougileTask } from '../src/lib/brief';
+import { cleanAnswers, yougileTask } from '../src/lib/brief';
 import { POST } from '../src/app/api/brief/route';
 
-test('branches remove irrelevant data and escape the manager description', () => {
- const a = { route: 'Готовый макет', company: '<script>alert(1)</script>', format: 'Интернет-магазин', shopFeatures: ['Онлайн-оплата'], style: 'Яркий', texts: 'Готовы' };
- expect(getSteps(a).map(s => s.id)).not.toContain('commerce');
- const clean = cleanAnswers(a);
- expect(clean.format).toBeUndefined(); expect(clean.style).toBeUndefined(); expect(clean.shopFeatures).toBeUndefined();
- const payload = yougileTask(clean, 'test-id', '2026-10-25', 'column', 'https://example.com/privacy');
- expect(payload.description).not.toContain('<script>'); expect(payload.description).toContain('&lt;script&gt;');
- expect(summary({})).toContain('Данных для рекомендации пока недостаточно');
+test('request contract removes unrelated fields and escapes CRM content', () => {
+ const clean = cleanAnswers({ route: 'Готовый шаблон', channel: 'MAX', phone: '+7 912 345 67 89', comment: '<script>alert(1)</script>', company: 'legacy', features: ['CRM'] });
+ expect(Object.keys(clean)).toEqual(['route', 'channel', 'phone', 'comment']);
+ const task = yougileTask(clean, 'test-id', '2026-10-31', 'column', 'https://example.com/privacy');
+ expect(task.description).not.toContain('<script>'); expect(task.description).toContain('&lt;script&gt;');
+ expect(task.description).toContain('Способ связи: MAX');
+ expect(cleanAnswers(null)).toEqual({});
 });
 
-test('YouGile adapter validates and deduplicates simultaneous submissions', async () => {
+test('YouGile adapter validates, protects against spam and deduplicates delivery', async () => {
  const names = ['BRIEF_ENABLED', 'BRIEF_POLICY_URL', 'YOUGILE_API_KEY', 'YOUGILE_COLUMN_ID'];
  const before = Object.fromEntries(names.map(n => [n, process.env[n]])); const fetchBefore = global.fetch;
  const request = (body: unknown, origin = 'https://studio.example') => new Request('https://studio.example/api/brief', { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: origin }, body: JSON.stringify(body) });
  try {
-  process.env.BRIEF_ENABLED = 'false';
-  expect((await POST(request({}))).status).toBe(503);
-  process.env.BRIEF_ENABLED = 'true'; process.env.BRIEF_POLICY_URL = 'https://studio.example/privacy'; process.env.YOUGILE_API_KEY = 'test-only'; process.env.YOUGILE_COLUMN_ID = 'test-column';
   let sends = 0; let sentBody: Record<string, unknown> = {};
   global.fetch = async (_url, init) => { sends++; sentBody = JSON.parse(init?.body as string); return new Response(JSON.stringify({ id: 'created-task' }), { status: 201 }); };
-  const data = { id: crypto.randomUUID(), consent: true, answers: { phone: '+7 912 345 67 89', company: 'Test', route: 'Готовый макет' } };
+  process.env.BRIEF_ENABLED = 'false';
+  expect((await POST(request({}))).status).toBe(503); expect(sends).toBe(0);
+  process.env.BRIEF_ENABLED = 'true'; process.env.BRIEF_POLICY_URL = 'https://studio.example/privacy'; process.env.YOUGILE_API_KEY = 'test-only'; process.env.YOUGILE_COLUMN_ID = 'test-column';
+  const data = { id: crypto.randomUUID(), consent: true, answers: { phone: '+7 912 345 67 89', route: 'Готовый шаблон', channel: 'Telegram', comment: 'Тест' } };
   expect((await POST(request({ ...data, consent: false }))).status).toBe(400);
   expect((await POST(request(data, 'https://other.example'))).status).toBe(403);
-  expect((await POST(request({ ...data, answers: { phone: '123' } }))).status).toBe(400);
+  expect((await POST(request({ ...data, answers: { ...data.answers, phone: '123' } }))).status).toBe(400);
+  expect((await POST(request({ ...data, answers: { ...data.answers, channel: 'Email' } }))).status).toBe(400);
+  expect((await POST(request({ ...data, answers: { phone: data.answers.phone } }))).status).toBe(400);
+  expect((await POST(request({ ...data, website: 'spam' }))).status).toBe(400);
+  expect((await POST(request({ ...data, extra: 'x'.repeat(41000) }))).status).toBe(413);
   const responses = await Promise.all([POST(request(data)), POST(request(data))]);
   expect(responses.map(r => r.status)).toEqual([201, 201]); expect(sends).toBe(1);
   expect(sentBody.columnId).toBe('test-column'); expect(sentBody.description).toContain('Согласие: получено');
-  expect((await POST(request({ ...data, answers: { ...data.answers, company: 'Changed' } }))).status).toBe(409);
+  expect((await POST(request({ ...data, answers: { ...data.answers, comment: 'Changed' } }))).status).toBe(409);
   global.fetch = async () => { throw new Error('timeout'); };
   const uncertain = await POST(request({ ...data, id: crypto.randomUUID() }));
   expect(uncertain.status).toBe(502); expect((await uncertain.json()).uncertain).toBe(true);
+  global.fetch = async () => new Response('{}', { status: 400 });
+  const rejected = await POST(request({ ...data, id: crypto.randomUUID() }));
+  expect(rejected.status).toBe(502); expect((await rejected.json()).uncertain).toBe(false);
+  expect((await POST(request({ ...data, id: crypto.randomUUID() }))).status).toBe(429);
  } finally { global.fetch = fetchBefore; for (const name of names) { if (before[name] === undefined) delete process.env[name]; else process.env[name] = before[name]; } }
 });
 
-test('chat supports template path, keyboard, skip and local download', async ({ page }) => {
- await page.goto('/#brief'); const chat = page.locator('#brief');
- await chat.getByRole('radio', { name: 'Готовый макет', exact: true }).check();
- await chat.getByRole('button', { name: 'Продолжить →', exact: true }).click();
- await chat.getByLabel('Название компании или проекта').fill('Мастерская света');
- await chat.getByLabel('Название компании или проекта').press('Control+Enter');
- await expect(chat.getByRole('heading', { name: 'Какой макет возьмём за основу?' })).toBeFocused();
- await chat.getByRole('radio', { name: 'ФОРМА — Частный мастер' }).check();
- await chat.getByRole('button', { name: 'Продолжить →', exact: true }).click();
- await expect(chat.getByRole('heading', { name: 'На какой запуск ориентируемся?' })).toBeVisible();
- await chat.getByRole('button', { name: 'Сразу к контактам' }).click();
- await chat.getByLabel('Телефон', { exact: true }).fill('123');
- await chat.getByRole('button', { name: 'Посмотреть мой бриф' }).click();
- await expect(chat.getByRole('alert')).toContainText('короткий');
- await chat.getByLabel('Телефон', { exact: true }).fill('+7 912 345 67 89');
- await chat.getByRole('button', { name: 'Посмотреть мой бриф' }).click();
- await expect(chat.getByText('Адаптация готового макета', { exact: true })).toBeVisible();
- await expect(chat.getByText(/ответы не отправлены/)).toBeVisible();
- const download = page.waitForEvent('download'); await chat.getByRole('button', { name: 'Скачать бриф' }).click();
- expect((await download).suggestedFilename()).toBe('brief-sayta.txt');
+test('enabled form requires consent, sends selected values once and shows success', async ({ page }) => {
+ test.skip(!process.env.TEST_REQUESTS_ENABLED, 'Run against a build with the request adapter enabled and a test policy URL.');
+ let sends = 0; let body: Record<string, unknown> = {};
+ await page.route('**/api/brief', async route => { sends++; body = route.request().postDataJSON(); await new Promise(resolve => setTimeout(resolve, 200)); await route.fulfill({ status: 201, json: { taskId: 'mock-task' } }); });
+ await page.goto('/#contacts');
+ const form = page.getByRole('form', { name: 'Заявка на сайт' });
+ await form.getByLabel('Номер телефона').fill('+7 913 456 78 90');
+ await form.getByLabel('Какой сайт нужен?').selectOption('Готовый шаблон');
+ await form.getByLabel('Как удобнее связаться?').selectOption('MAX');
+ await form.getByLabel('Комментарий о проекте').fill('Столярная мастерская');
+ const submit = form.getByRole('button', { name: 'Отправить заявку', exact: true });
+ await submit.click(); await expect(form.getByRole('checkbox')).toBeFocused(); expect(sends).toBe(0);
+ await form.getByRole('checkbox').check(); await submit.click();
+ await expect(form.getByRole('button')).toBeDisabled();
+ await expect(form.getByRole('status')).toContainText('Заявка отправлена'); expect(sends).toBe(1);
+ expect(body.answers).toEqual({ route: 'Готовый шаблон', channel: 'MAX', phone: '+7 913 456 78 90', comment: 'Столярная мастерская' });
 });
 
-test('shop questions, backtracking and skip work on a phone', async ({ page }) => {
- await page.setViewportSize({ width: 390, height: 844 }); await page.goto('/#brief'); const chat = page.locator('#brief');
- await chat.getByRole('radio', { name: 'Индивидуальный сайт', exact: true }).check();
- await chat.getByRole('button', { name: 'Продолжить →', exact: true }).click();
- await chat.getByRole('button', { name: 'Пропустить шаг', exact: true }).click();
- await chat.getByRole('radio', { name: 'Интернет-магазин', exact: true }).check();
- await chat.getByRole('button', { name: 'Продолжить →', exact: true }).click();
- await expect(chat.getByRole('heading', { name: 'Уточним детали каталога' })).toBeVisible();
- await chat.getByRole('checkbox', { name: 'Онлайн-оплата', exact: true }).check();
- await chat.getByRole('button', { name: 'Продолжить →', exact: true }).click();
- await chat.locator('.brief-project > summary').click();
- await chat.getByRole('button', { name: 'Изменить: Подход', exact: true }).click();
- await chat.getByRole('radio', { name: 'Готовый макет', exact: true }).check();
- await chat.getByRole('button', { name: 'Сохранить изменения', exact: true }).click();
- await chat.getByRole('button', { name: 'Сохранить и закончить' }).click();
- await chat.getByText('Все ответы и описание проекта', { exact: true }).click();
- await expect(chat.locator('.brief-summary')).not.toContainText('Онлайн-оплата');
- await expect(chat.locator('.brief-summary')).not.toContainText('Интернет-магазин');
- expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-});
-
-test('brief stays readable at narrow widths and reduced motion', async ({ page }) => {
- await page.emulateMedia({ reducedMotion: 'reduce' });
- for (const width of [320, 768, 1440]) {
-  await page.setViewportSize({ width, height: 900 }); await page.goto('/#brief');
-  await expect(page.locator('#brief .brief-question')).toBeVisible();
-  expect(await page.locator('.brief-question').evaluate(el => getComputedStyle(el).animationName)).toBe('none');
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
- }
-});
-
-test('compact project summary supports editing, cancelling and returning to review', async ({ page }) => {
- await page.setViewportSize({ width: 390, height: 844 }); await page.goto('/#brief');
- const chat = page.locator('#brief');
- await expect(chat.locator('.brief-top')).toContainText('из 5');
- await chat.getByRole('button', { name: 'Продолжить →', exact: true }).click();
- await chat.getByLabel('Название компании или проекта').fill('Кофейня');
- await chat.getByRole('radio', { name: 'Кафе и еда', exact: true }).check();
- await chat.getByRole('button', { name: 'Сохранить и закончить' }).click();
- await chat.locator('.brief-project > summary').click();
- await expect(chat.locator('.brief-project dd')).toContainText(['Кофейня', 'Кафе и еда']);
- await chat.getByRole('button', { name: 'Изменить: Бизнес', exact: true }).click();
- await chat.getByLabel('Название компании или проекта').fill('Пекарня');
- await chat.getByRole('button', { name: 'Отменить изменения', exact: true }).click();
- await expect(chat.getByRole('heading', { name: 'Вот что получилось' })).toBeVisible();
- await chat.locator('.brief-project > summary').click();
- await expect(chat.locator('.brief-project dd').first()).toHaveText('Кофейня');
- await chat.getByRole('button', { name: 'Изменить: Бизнес', exact: true }).click();
- await chat.getByLabel('Название компании или проекта').fill('Пекарня');
- await chat.getByRole('button', { name: 'Сохранить изменения', exact: true }).click();
- await expect(chat.getByRole('heading', { name: 'Вот что получилось' })).toBeVisible();
- await chat.locator('.brief-project > summary').click();
- await expect(chat.locator('.brief-project dd').first()).toHaveText('Пекарня');
- await expect(chat.locator('.brief-reply')).toHaveCount(0);
- await chat.locator('.brief-project').screenshot({ path: '.taste-skill/brief/390-project-edited.png' });
+test('enabled form retains values on rejection and prevents uncertain retries', async ({ page }) => {
+ test.skip(!process.env.TEST_REQUESTS_ENABLED, 'Requires enabled test configuration.');
+ let sends = 0; const ids: string[] = [];
+ await page.route('**/api/brief', async route => { sends++; ids.push(route.request().postDataJSON().id); await route.fulfill({ status: 502, json: sends === 1 ? { message: 'Сервис не принял заявку.', uncertain: false } : { message: 'Уточните получение у студии.', uncertain: true } }); });
+ await page.goto('/#contacts'); const form = page.getByRole('form', { name: 'Заявка на сайт' });
+ await form.getByLabel('Номер телефона').fill('+7 913 456 78 90'); await form.getByRole('checkbox').check();
+ await form.getByRole('button').click(); await expect(form.getByRole('status')).toContainText('Сервис не принял');
+ await expect(form.getByLabel('Номер телефона')).toHaveValue('+7 913 456 78 90');
+ await form.getByRole('button').click(); await expect(form.getByRole('status')).toContainText('Уточните получение');
+ await expect(form.getByRole('button')).toBeDisabled(); expect(ids[0]).toBe(ids[1]); expect(sends).toBe(2);
 });

@@ -1,12 +1,12 @@
 {
-  "name": "studio",
+  "name": "sitika",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --hostname 0.0.0.0",
+    "dev": "next dev --hostname 127.0.0.1",
     "prebuild": "npm run blog:check",
     "build": "next build --webpack",
-    "start": "next start --hostname 0.0.0.0",
+    "start": "next start --hostname 127.0.0.1",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
     "blog:check": "node scripts/check-blog.mjs",

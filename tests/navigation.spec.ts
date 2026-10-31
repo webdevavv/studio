@@ -1,17 +1,16 @@
 import { test, expect } from '@playwright/test';
 
-test('hero actions are equal, tabs use keyboard and hovering does not move controls', async ({ page }) => {
+test('hero actions lead to form and work, tabs use keyboard without moving controls', async ({ page }) => {
  for (const width of [320, 390, 1440]) {
   await page.setViewportSize({ width, height: 1000 });
   await page.goto('/');
   const actions = page.locator('.hero .actions a');
   await expect(actions).toHaveCount(2);
-  await expect(actions.nth(0)).toHaveAttribute('href', '#brief');
-  await expect(actions.nth(1)).toHaveAttribute('href', '/catalog');
+  await expect(actions.nth(0)).toHaveAttribute('href', '#contacts');
+  await expect(actions.nth(1)).toHaveAttribute('href', '#projects');
   const a = (await actions.nth(0).boundingBox())!;
   const b = (await actions.nth(1).boundingBox())!;
-  expect(Math.abs(a.width - b.width)).toBeLessThan(1);
-  expect(Math.abs(a.height - b.height)).toBeLessThan(1);
+  expect(a.width).toBeGreaterThan(100); expect(b.width).toBeGreaterThan(100);
   await actions.nth(0).hover();
   expect(await actions.nth(0).evaluate(el => getComputedStyle(el).transform)).toBe('none');
   await page.getByRole('tab', { name: 'Кофейня', exact: true }).focus();
@@ -26,10 +25,10 @@ test('hero actions are equal, tabs use keyboard and hovering does not move contr
 
 test('internal pages and filters preserve the browser document', async ({ page }) => {
  await page.goto('/');
- await expect(page.getByRole('button', { name: 'Продолжить →', exact: true })).toBeEnabled();
+ await expect(page.getByRole('form', { name: 'Заявка на сайт' })).toBeVisible();
  await page.evaluate(() => { (window as Window & { navigationMarker?: string }).navigationMarker = 'same-document'; });
  const sameDocument = async () => expect(await page.evaluate(() => (window as Window & { navigationMarker?: string }).navigationMarker)).toBe('same-document');
- await page.locator('.hero').getByRole('link', { name: 'Выбрать дизайн', exact: true }).click();
+ await page.getByRole('navigation', { name: 'Навигация в подвале' }).getByRole('link', { name: /Каталог сайтов/ }).click();
  await expect(page).toHaveURL(/\/catalog$/); await sameDocument();
  await page.getByLabel('Найти макет', { exact: true }).fill('Крошка');
  await page.getByRole('button', { name: 'Показать макеты' }).click();
@@ -46,6 +45,6 @@ test('internal pages and filters preserve the browser document', async ({ page }
  await expect(page).toHaveURL(/\/blog\?/); await sameDocument();
  await page.locator('.blog-entry h3 a').first().click();
  await expect(page.locator('.article-body')).toBeVisible(); await sameDocument();
- await page.getByRole('link', { name: 'Студия — главная' }).click();
+ await page.getByRole('link', { name: 'Сайтика — главная' }).click();
  await expect(page.locator('.hero')).toBeVisible(); await sameDocument();
 });

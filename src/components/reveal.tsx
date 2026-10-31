@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
-const defaultSelector = '.section-heading,.brief-intro,.brief-frame,.principles>h2,.principle-sheets article,.adaptation-copy,.adaptation-demo,.service,.project-heading,.project-picture,.process-intro,.steps li,.about-story,.about-perspective,.faq>h2,.faq-list details,.contact>h2,.contact-body,.footer-navigation>a';
+const defaultSelector = '.section-heading,.principles>h2,.principle-sheets article,.adaptation-copy,.adaptation-demo,.service,.project-heading,.project-picture,.process-intro,.steps li,.about-story,.about-perspective,.faq>h2,.faq-list details,.contact>h2,.contact-body,.pricing-options article,.approach-points article,.included-list,.payment-copy,.footer-navigation>a';
 
 export function Reveal({ selector = defaultSelector }: { selector?: string }) {
  const pathname = usePathname();
