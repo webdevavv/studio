@@ -51,15 +51,17 @@ test('enabled form requires consent, sends selected values once and shows succes
  await page.goto('/#contacts');
  const form = page.getByRole('form', { name: 'Заявка на сайт' });
  await form.getByLabel('Номер телефона').fill('+7 913 456 78 90');
- await form.getByLabel('Какой сайт нужен?').selectOption('Готовый шаблон');
- await form.getByLabel('Как удобнее связаться?').selectOption('MAX');
+ await form.getByRole('combobox', { name: /Какой сайт нужен/ }).click();
+ await form.getByRole('option', { name: 'Готовый шаблон', exact: true }).click();
+ await form.getByRole('combobox', { name: /Как удобнее связаться/ }).click();
+ await form.getByRole('option', { name: 'MAX', exact: true }).click();
  await form.getByLabel('Комментарий о проекте').fill('Столярная мастерская');
  const submit = form.getByRole('button', { name: 'Отправить заявку', exact: true });
  await submit.click(); await expect(form.getByRole('checkbox')).toBeFocused(); expect(sends).toBe(0);
  await form.getByRole('checkbox').check(); await submit.click();
  await expect(form.getByRole('button')).toBeDisabled();
  await expect(form.getByRole('status')).toContainText('Заявка отправлена'); expect(sends).toBe(1);
- expect(body.answers).toEqual({ route: 'Готовый шаблон', channel: 'MAX', phone: '+7 913 456 78 90', comment: 'Столярная мастерская' });
+ expect(body.answers).toEqual({ route: 'Готовый шаблон', channel: 'MAX', phone: '+7 (913) 456-78-90', comment: 'Столярная мастерская' });
 });
 
 test('enabled form retains values on rejection and prevents uncertain retries', async ({ page }) => {
@@ -69,7 +71,7 @@ test('enabled form retains values on rejection and prevents uncertain retries', 
  await page.goto('/#contacts'); const form = page.getByRole('form', { name: 'Заявка на сайт' });
  await form.getByLabel('Номер телефона').fill('+7 913 456 78 90'); await form.getByRole('checkbox').check();
  await form.getByRole('button').click(); await expect(form.getByRole('status')).toContainText('Сервис не принял');
- await expect(form.getByLabel('Номер телефона')).toHaveValue('+7 913 456 78 90');
+ await expect(form.getByLabel('Номер телефона')).toHaveValue('+7 (913) 456-78-90');
  await form.getByRole('button').click(); await expect(form.getByRole('status')).toContainText('Уточните получение');
  await expect(form.getByRole('button')).toBeDisabled(); expect(ids[0]).toBe(ids[1]); expect(sends).toBe(2);
 });

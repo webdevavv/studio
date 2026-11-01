@@ -1,0 +1,39 @@
+.studio-process{background:var(--sky);padding:48px 40px;margin-top:var(--space);border-radius:var(--radius-section)}
+.studio-process-intro{display:flex;justify-content:space-between;align-items:start;gap:50px;margin-bottom:45px}
+.shell .studio-process h2{font-size:clamp(32px,4.2vw,60px);line-height:1.08;letter-spacing:-.045em;font-weight:650;max-width:650px}
+.studio-process h2 span{color:var(--accent)}
+.studio-manager{width:100%;max-width:440px;flex-shrink:0}
+.studio-manager-identity{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:14px}
+.studio-manager-avatar{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--ink);color:var(--paper);font-size:22px;font-weight:750}
+.studio-manager-bubble{position:relative;background:var(--paper);border-radius:4px 20px 20px 20px;padding:24px}
+.studio-manager-bubble:before{content:'';position:absolute;top:0;left:-10px;width:12px;height:16px;background:var(--paper);clip-path:polygon(0 0,100% 0,100% 100%)}
+.studio-manager-bubble a{display:inline-flex;align-items:center;min-height:44px;margin-top:14px;color:var(--ink);font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:1100px){.studio-manager{margin-top:28px;max-width:600px}}
+.studio-process-intro>p{padding:24px;background:var(--paper);border-radius:var(--radius-card)}
+.studio-process li:nth-child(2):before{background:var(--accent);color:var(--ink)}
+.studio-process-intro>p{max-width:440px}
+.shell .studio-process ol{display:grid;grid-template-columns:repeat(var(--studio-columns,4),minmax(0,1fr));gap:30px;list-style:none;padding:0;margin:0;counter-reset:studio-step}
+.studio-process li{position:relative;padding-top:30px;counter-increment:studio-step;min-width:0}
+.shell .studio-process li+li{margin-top:0}
+.studio-process li:before{content:counter(studio-step);display:grid;place-items:center;width:38px;height:38px;background:var(--ink);color:var(--paper);border-radius:50%;margin-bottom:24px;position:relative;z-index:1;font-size:16px;font-weight:650}
+.studio-process li:not(:last-child):after{content:'';position:absolute;top:49px;left:38px;width:calc(100% - 8px);height:2px;background:#8ab5cc}
+.shell .studio-process h3{font-size:21px;font-weight:600;line-height:1.25;letter-spacing:-.03em;margin-bottom:16px}
+@media(max-width:1100px){.shell .studio-process ol{grid-template-columns:1fr 1fr}.studio-process li:nth-child(2):after{display:none}.studio-process-intro{display:block}.studio-process-intro>p{margin-top:24px;max-width:650px}}
+@media(max-width:760px){.studio-process{padding:32px 24px;margin-top:64px}.shell .studio-process ol{grid-template-columns:1fr;gap:0}.studio-process li{padding:0 0 30px 56px}.studio-process li:before{position:absolute;left:0;top:0;margin:0}.studio-process li:not(:last-child):after{display:block;top:38px;bottom:0;left:18px;width:2px;height:auto}.studio-process li:last-child{padding-bottom:0}}
+
+/* Incoming Telegram-style message: sender inside, avatar at the bottom left. */
+.studio-manager{display:flex;align-items:flex-end;gap:12px}
+.studio-manager-avatar{flex:0 0 40px;margin-bottom:2px}
+.studio-manager-bubble{min-width:0;flex:1;border-radius:20px 20px 20px 4px;padding:20px 22px}
+.studio-manager-bubble:before{top:auto;bottom:0;left:-9px;width:12px;height:16px;clip-path:polygon(100% 0,100% 100%,0 100%)}
+.studio-manager-name{display:block;color:#2b6382;font-size:14px;font-weight:650;margin-bottom:8px}
+.studio-manager-bubble p{margin:0;font-size:16px;line-height:1.55}
+.studio-process-intro:has(.studio-manager){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:40px}
+.studio-process-intro .studio-manager{max-width:none}
+.studio-manager-avatar{order:2}
+.studio-manager-bubble{border-radius:20px 20px 4px 20px}
+.studio-manager-bubble:before{display:none}
+.studio-manager-bubble:after{content:'';position:absolute;right:-10px;bottom:0;width:18px;height:22px;background:var(--paper);border-radius:0 0 16px 0}
+.studio-manager-bubble:before{content:'';display:block;position:absolute;top:auto;left:auto;right:-12px;bottom:7px;width:12px;height:22px;background:var(--sky);border-radius:0 0 0 12px;clip-path:none;z-index:1}
+@media(max-width:1100px){.studio-process-intro:has(.studio-manager){grid-template-columns:1fr;gap:24px}.studio-process-intro .studio-manager{margin-top:0}}
+@media(max-width:400px){.studio-manager{gap:9px}.studio-manager-avatar{width:34px;height:34px;flex-basis:34px;font-size:19px}.studio-manager-bubble{padding:18px 16px}}

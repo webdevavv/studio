@@ -134,3 +134,4 @@
  .blog-related h3{font-size:26px}
 }
 @media(prefers-reduced-motion:reduce){.article-sidebar{position:static}}
+.blog-service-link{margin-top:40px}

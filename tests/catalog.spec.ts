@@ -57,7 +57,8 @@ test('detail pages use correct data, unique SEO, breadcrumbs and selected reques
   const form = page.getByRole('form', { name: `Заявка на макет «${title}»` });
   await expect(form).toHaveAttribute('data-template-id', slug);
   await expect(form.getByRole('button', { name: 'Отправить заявку', exact: true })).toBeEnabled();
-  await expect(form).toContainText('Приём заявок пока не подключён');
+  if (process.env.TEST_REQUESTS_ENABLED) await expect(form.getByRole('checkbox')).toBeVisible();
+  else await expect(form).toContainText('Приём заявок пока не подключён');
  }
  expect(titles.size).toBe(3); expect(descriptions.size).toBe(3);
 });

@@ -111,7 +111,7 @@ export function DemoPreview({ demoUrl, title, embedAllowed = true }: Props) {
     </div>
     <div className="demo-caption"><p className="demo-status" role="status">{status === 'loading' ? 'Загружаем демо…' : status === 'timeout' ? 'Демо загружается дольше обычного. Откройте его отдельно.' : status === 'error' ? 'Не удалось загрузить демо. Откройте сайт отдельно.' : 'Листайте сайт прямо внутри устройства'}</p></div>
    </> : <p id={`${id}-screen`} role="tabpanel" aria-labelledby={`${id}-${device.id}`} className="demo-unavailable">Сайт не разрешает встроенный просмотр. Откройте демо в отдельной вкладке.</p>}
-   <div className="demo-fallback"><a href={demoUrl} target="_blank" rel="noopener noreferrer">Открыть сайт в новой вкладке ↗</a><button type="button" aria-expanded={help} aria-controls={`${id}-help`} onClick={() => setHelp(value => !value)}>Не видно сайт?</button></div>
+   <div className="demo-fallback"><a href={demoUrl} target="_blank" rel="noopener noreferrer">Открыть сайт в новой вкладке</a><button type="button" aria-expanded={help} aria-controls={`${id}-help`} onClick={() => setHelp(value => !value)}>Не видно сайт?</button></div>
    {help && <p id={`${id}-help`} className="demo-help">Браузер или сайт могут ограничивать встроенный просмотр. Из-за ограничений доступа мы не можем проверить содержимое чужого сайта из этого окна. Попробуйте перезагрузить демо или открыть его отдельно.</p>}
    <p className="demo-preview-notice">Демонстрация дизайна. Не вводите личные данные и не оформляйте запись.</p>
   </div>

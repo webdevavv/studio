@@ -5,8 +5,9 @@ import './contact-form.css';
 import { RequestSelect } from './request-select';
 import { phoneError } from '@/lib/phone';
 import { contactChannels, requestKinds } from '@/lib/brief';
+import type { RequestContext } from '@/lib/request-context';
 
-export function ContactForm({ enabled = false, policyUrl = '' }: { enabled?: boolean; policyUrl?: string }) {
+export function ContactForm({ enabled = false, policyUrl = '', context, defaultKind }: { enabled?: boolean; policyUrl?: string; context?: RequestContext; defaultKind?: string }) {
  const [ready, setReady] = useState(false);
  useEffect(() => setReady(true), []);
  const [error, setError] = useState('');
@@ -30,7 +31,7 @@ export function ContactForm({ enabled = false, policyUrl = '' }: { enabled?: boo
   if (!enabled || !validPolicy) { setMessage('Заявка не отправлена: приём заявок пока не подключён.'); return; }
   if (!consentRef.current?.checked) { setMessage('Подтвердите согласие на обработку персональных данных.'); consentRef.current?.focus(); return; }
   const form = new FormData(event.currentTarget);
-  const answers = { route: String(form.get('route')), channel: String(form.get('channel')), phone: String(form.get('phone')), comment: String(form.get('comment')) };
+  const answers = { route: String(form.get('route')), channel: String(form.get('channel')), phone: String(form.get('phone')), comment: String(form.get('comment')), ...(context ? { ...context, pageUrl: window.location.origin + window.location.pathname } : {}) };
   const signature = JSON.stringify(answers);
   if (request.current?.signature !== signature) request.current = { id: crypto.randomUUID(), signature };
   sending.current = true; setState('pending');
@@ -48,7 +49,7 @@ export function ContactForm({ enabled = false, policyUrl = '' }: { enabled?: boo
   } finally { sending.current = false; }
  }}>
   <fieldset disabled={locked}><legend className="sr-only">Данные заявки</legend>
-   <RequestSelect id="contact-kind" name="route" label="Какой сайт нужен?" options={requestKinds}/>
+   <RequestSelect id="contact-kind" name="route" label="Какой сайт нужен?" options={requestKinds} defaultValue={defaultKind}/>
    <RequestSelect id="contact-channel" name="channel" label="Как удобнее связаться?" options={contactChannels}/>
    <div className="form-field"><label htmlFor="contact-phone">Номер телефона <span aria-hidden="true">*</span></label><input ref={phoneRef} id="contact-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+7 (999) 123-45-67" required maxLength={40} aria-invalid={error ? true : undefined} aria-describedby="contact-phone-feedback" onKeyDown={event => {
     const input = event.currentTarget;

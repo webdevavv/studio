@@ -44,11 +44,11 @@ test('tabs, mobile navigation and FAQ work with the keyboard', async ({ page }) 
 test('SSR, metadata, demo indexing and 404 stay correct', async ({ browser, request }) => {
  const context = await browser.newContext({ javaScriptEnabled: false }); const page = await context.newPage(); await page.goto('/');
  await expect(page.getByRole('heading', { level: 1, name: 'Создадим современный сайт для вашего бизнеса за 2 дня', exact: true })).toBeVisible(); await expect(page.getByRole('tabpanel')).toContainText('Хороший день');
- await expect(page.locator('main>section')).toHaveCount(12); await expect(page).toHaveTitle('Создание сайтов под ключ от 7 000 ₽ — за 2 дня');
+ await expect(page.locator('main>section')).toHaveCount(12); await expect(page).toHaveTitle('Создание сайтов под ключ за 10 000 ₽ — за 2 дня');
  expect(await page.locator('meta[name=description]').getAttribute('content')).toContain('Создадим лендинг');
  expect(await page.locator('meta[property="og:title"]').getAttribute('content')).toContain('Создание сайтов под ключ');
  await expect(page.getByRole('form', { name: 'Заявка на сайт' }).getByRole('button')).toBeDisabled();
- await context.close(); expect(await (await request.get('/robots.txt')).text()).toContain('Disallow: /'); expect((await request.get('/missing-page')).status()).toBe(404);
+ await context.close(); expect(await (await request.get('/robots.txt')).text()).toContain(process.env.TEST_INDEXABLE ? 'Allow: /' : 'Disallow: /'); expect((await request.get('/missing-page')).status()).toBe(404);
 });
 
 test('project images, demo labels and honest pricing remain visible', async ({ page }) => {
@@ -59,5 +59,5 @@ test('project images, demo labels and honest pricing remain visible', async ({ p
   await expect.poll(() => image.evaluate(el => (el as HTMLImageElement).complete && (el as HTMLImageElement).naturalWidth > 0)).toBe(true);
  }
  await expect(page.locator('#projects')).toContainText('Демо-проект'); await expect(page.locator('#pricing .price-value').first()).toHaveText('2 000 ₽');
- await expect(page.locator('#pricing .price-value').last()).toHaveText('7 000–10 000 ₽'); await expect(page.locator('.faq details')).toHaveCount(10);
+ await expect(page.locator('#pricing .price-value').last()).toHaveText('10 000 ₽'); await expect(page.locator('.faq details')).toHaveCount(10);
 });

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
  return <main className="shell"><article className="section">
-  <Link href="/">← На главную</Link>
+  <Link href="/">На главную</Link>
   <h1>Политика конфиденциальности</h1>
   <p><strong>Черновик. Страница готовится к публикации.</strong></p>
   <p>Перед включением приёма заявок здесь будет размещена действующая политика обработки персональных данных.</p>

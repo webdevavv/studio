@@ -1,0 +1,6 @@
+import { homeSteps } from '@/lib/home';
+import './studio-process.css';
+
+export function StudioProcess({ title = 'От вашей идеи до готового сайта —', id = 'process', items = homeSteps, accent = 'четыре шага', description = 'Все вопросы и обратная связь проходят через менеджера. Он ведёт проект от заявки до передачи; разработчик занимается сайтом.', chat = false }: { title?: string; id?: string; items?: string[][]; accent?: string; description?: string; chat?: boolean }) {
+ return <section className="studio-process" id={id} aria-labelledby={`${id}-title`}><div className="studio-process-intro"><h2 id={`${id}-title`}>{title}{accent && <> <span>{accent}</span></>}</h2>{description && (chat ? <aside className="studio-manager" aria-label="Вопрос менеджера"><span className="studio-manager-avatar" aria-hidden="true">С</span><div className="studio-manager-bubble"><strong className="studio-manager-name">Менеджер Сайтики</strong><p>{description}</p><a href="#request">Рассказать о проекте</a></div></aside> : <p>{description}</p>)}</div><ol style={{ '--studio-columns': items.length } as import('react').CSSProperties}>{items.map(([heading, text]) => <li key={heading}><h3>{heading}</h3><p>{text}</p></li>)}</ol></section>;
+}
