@@ -32,6 +32,8 @@
 @media(max-width:1100px){
  .shell .header .header-catalog{display:none}
  .header .site-navigation .mobile-menu-catalog{display:flex;justify-content:space-between;gap:20px;background:var(--accent);color:var(--ink);border:0;border-radius:var(--radius-control);padding:20px 22px;margin-bottom:12px;font-size:clamp(26px,6vw,40px);transition:background-color .25s ease}
+ /* Active catalog routes must keep dark text on the orange menu surface. */
+ .shell .header .site-navigation .mobile-menu-catalog[aria-current]{color:var(--ink)}
  .shell .header .site-navigation .mobile-menu-catalog:hover{background:#ed5b25!important;color:var(--ink)!important}
  .mobile-menu-catalog svg{flex-shrink:0}
 }
