@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-const phrases = ['за 2 дня', 'под ключ', 'под вашу задачу'];
+const defaultPhrases = ['за 2 дня', 'под ключ', 'под вашу задачу'];
 
-export function HeroTypewriter() {
+export function HeroTypewriter({ phrases = defaultPhrases, className = '' }: { phrases?: readonly string[]; className?: string }) {
  const [text, setText] = useState(phrases[0]);
  const element = useRef<HTMLSpanElement>(null);
  useEffect(() => {
@@ -38,6 +38,6 @@ export function HeroTypewriter() {
   motion.addEventListener('change', resume);
   document.addEventListener('visibilitychange', resume);
   return () => { cancel(); observer.disconnect(); motion.removeEventListener('change', resume); document.removeEventListener('visibilitychange', resume); };
- }, []);
- return <span className="hero-timing hero-typewriter" ref={element}><span aria-hidden="true">{text}</span><span className="sr-only">за 2 дня</span></span>;
+ }, [phrases]);
+ return <span className={`hero-timing hero-typewriter ${className}`} ref={element}><span aria-hidden="true">{text}</span><span className="sr-only">{phrases[0]}</span></span>;
 }

@@ -65,7 +65,7 @@ test('blog and the persistent mobile request button fit all viewports', async ({
   }
  }
  await page.setViewportSize({ width: 320, height: 844 });
- await page.goto('/catalog/coffee');
+ await page.goto('/catalog/beauty-she');
  const cta = page.getByRole('link', { name: 'Заказать сайт', exact: true });
  await expect(cta).toHaveAttribute('href', '#request');
  await cta.click();
@@ -73,6 +73,5 @@ test('blog and the persistent mobile request button fit all viewports', async ({
 
  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
  await expect(cta).toBeVisible();
- await page.getByRole('button', { name: 'Меню', exact: true }).click();
- await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible();
+ await expect(page.locator('.header').getByRole('link', { name: 'Каталог', exact: true })).toBeVisible();
 });

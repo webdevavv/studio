@@ -1,13 +1,13 @@
-import { catalogTemplates } from './catalog';
+import { publishedTemplates } from './catalog';
 
-// The catalog remains the source of truth; detail pages can be added per project later.
+// The homepage reuses published catalog entries and their detail routes.
 export type PortfolioProject = {
  id: string; name: string; category: string; description: string; image: string;
  demo: boolean; href: string; detailHref?: string;
 };
-export const portfolio: PortfolioProject[] = catalogTemplates.map(template => ({
+export const portfolio: PortfolioProject[] = publishedTemplates.map(template => ({
  id: template.id, name: template.name, category: template.category,
- description: template.note, image: template.image, demo: true, href: `/catalog/${template.id}`,
+ description: template.description, image: template.image, demo: true, href: `/catalog/${template.id}`,
 }));
 export const homeSteps = [
  ['Расскажите о задаче', 'Оставьте короткую заявку. Достаточно телефона и пары слов о вашем бизнесе.'],

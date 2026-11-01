@@ -1,38 +1,75 @@
-import { concepts } from './site';
+import { money, site } from './site';
 
-export const catalogCategories = [
- { id: 'food', label: 'Кафе и еда' },
- { id: 'beauty', label: 'Красота и уход' },
- { id: 'craft', label: 'Мастерские' },
-] as const;
+export type CatalogTemplate = {
+ id: string; slug: string; title: string; name: string; categoryId: string; category: string;
+ styleId: string; description: string; fullDescription: string; keywords: string; image: string;
+ demoUrl: string; embedAllowed?: boolean; price: number | null; isPublished: boolean; seoTitle: string; seoDescription: string;
+ heading: string; includedFeatures: string[]; customizationOptions: string[]; faq: [string, string][];
+};
 
-export const catalogStyles = [
- { id: 'warm', label: 'Тёплый' },
- { id: 'calm', label: 'Спокойный' },
- { id: 'bold', label: 'Выразительный' },
-] as const;
-
-const details = {
- coffee: { categoryId: 'food', styleId: 'warm', description: 'Мягкие оттенки, крупная типографика и иллюстрация чашки. Для кофейни, пекарни или небольшого кафе.', keywords: 'кофе кафе кофейня пекарня еда ресторан выпечка', audience: 'Кофейни, пекарни, небольшие кафе' },
- beauty: { categoryId: 'beauty', styleId: 'calm', description: 'Приглушённый зелёный, свободная композиция и акцент на заботе. Для салона, студии ухода или частного мастера.', keywords: 'салон красота уход спа spa косметолог парикмахер', audience: 'Салоны красоты и студии ухода' },
- craft: { categoryId: 'craft', styleId: 'bold', description: 'Землистые оттенки, уверенный шрифт и предмет в центре внимания. Для мастерской и вещей ручной работы.', keywords: 'мебель дерево мастерская столяр ручная работа ремесло', audience: 'Мастерские и частные мастера' },
-} as const;
-
-export const catalogTemplates = concepts.map(concept => ({
- ...concept,
- ...details[concept.id as keyof typeof details],
- image: `/projects/${concept.id}.png`,
-}));
-
-export type CatalogTemplate = (typeof catalogTemplates)[number];
-export const findTemplate = (id: string) => catalogTemplates.find(template => template.id === id);
-
+// Confirmed studio adaptation price; no client-supplied amount is accepted by the API.
+const price = site.catalogPrice;
+export const catalogTemplates: CatalogTemplate[] = [
+ {
+  id: 'beauty-she', slug: 'beauty-she', title: 'BEAUTY SHE', name: 'BEAUTY SHE', categoryId: 'beauty', category: 'Красота и здоровье', styleId: 'editorial',
+  description: 'Современный сайт для салона красоты с презентацией услуг, изображениями, контактами и переходом к записи.',
+  fullDescription: 'Сайт салона красоты с услугами, фотографиями и контактами. Перед запуском заменим демо-наполнение вашими материалами.',
+  keywords: 'салон красота здоровье уход beauty парикмахер', image: '/projects/beauty-she.webp', demoUrl: 'https://beauty-she.vercel.app/', price, isPublished: true,
+  heading: 'BEAUTY SHE — сайт для салона красоты',
+  seoTitle: 'Шаблон сайта для салона красоты BEAUTY SHE',
+  seoDescription: 'Рассмотрите шаблон BEAUTY SHE для салона красоты на компьютере и смартфоне. Адаптируем тексты, фотографии, логотип и контакты под ваш салон.',
+  includedFeatures: ['Презентация салона и его атмосферы', 'Разделы услуг и фотографий', 'Контакты и элементы перехода к записи'],
+  customizationOptions: ['Название и логотип салона', 'Существующие описания услуг и фотографии', 'Контакты и предусмотренные шаблоном ссылки'],
+  faq: [
+   ['Можно ли подключить онлайн-запись?', 'В шаблоне есть элементы перехода к записи. Подключение сервиса бронирования и отправка заявок требуют отдельного согласования и проверки. Демоверсия не подтверждает такую интеграцию.'],
+   ['Можно ли заменить фотографии салона?', 'Да, замена существующих изображений входит в стандартную настройку. Подготовьте фотографии, которые вы имеете право использовать.'],
+   ['Отзывы и цены из демо останутся на моём сайте?', 'Перед запуском заменим демонстрационное наполнение вашими достоверными материалами. Демонстрационные отзывы и показатели не являются подтверждёнными результатами.'],
+  ],
+ },
+ {
+  id: 'golden-hands', slug: 'golden-hands', title: 'Золотые ручки', name: 'Золотые ручки', categoryId: 'beauty', category: 'Красота и здоровье', styleId: 'warm',
+  description: 'Сайт школы-студии красоты с направлениями услуг, галереей, информацией о студии и контактами.',
+  fullDescription: 'Шаблон знакомит посетителя со школой-студией красоты: показывает направления работы, фотографии и информацию о пространстве. Подойдёт студии, которой важно представить услуги и обучение в одном месте. Содержимое демоверсии служит примером наполнения; реальные программы, условия и контакты предоставляются владельцем бизнеса.',
+  keywords: 'школа студия красота обучение услуги салон золотые ручки', image: '/projects/golden-hands.webp', demoUrl: 'https://goldenhands38.vercel.app/', price, isPublished: true,
+  heading: 'Золотые ручки — сайт студии красоты',
+  seoTitle: 'Шаблон сайта школы-студии красоты «Золотые ручки»',
+  seoDescription: 'Готовый сайт школы-студии красоты «Золотые ручки»: направления, галерея и контакты. Изучите живую демоверсию и закажите настройку под свой бизнес.',
+  includedFeatures: ['Презентация школы-студии', 'Направления услуг и галерея', 'Информация о студии и контакты'],
+  customizationOptions: ['Название, логотип и информация о студии', 'Фотографии и тексты существующих направлений', 'Контакты и предусмотренные контактные ссылки'],
+  faq: [
+   ['Подойдёт ли сайт студии без обучения?', 'Обсудим замену текстов в существующих блоках под ваши услуги. Удаление, добавление или перестройка разделов оцениваются отдельно.'],
+   ['Входит ли галерея моих работ в настройку?', 'Да, заменим изображения в существующей галерее на предоставленные вами. Дополнительные разделы или новая механика галереи согласовываются отдельно.'],
+   ['Запись из демоверсии уже подключена?', 'Демонстрация показывает интерфейс. Рабочая запись и сторонние интеграции проверяются и согласовываются отдельно перед запуском вашего сайта.'],
+  ],
+ },
+ {
+  id: 'notimo', slug: 'notimo', title: 'Notimo', name: 'Notimo', categoryId: 'technology', category: 'Сервисы и технологии', styleId: 'product',
+  description: 'Лендинг для цифрового сервиса онлайн-записи клиентов с презентацией возможностей продукта.',
+  fullDescription: 'Продуктовый лендинг создаваемого сервиса онлайн-записи с предложением раннего доступа. Структура помогает объяснить назначение продукта, показать его интерфейс и представить предложение. Это шаблон презентационного сайта: демонстрация кабинета, тарифов или элементов записи не означает передачу работающего сервиса, пользовательской базы или платёжной системы.',
+  keywords: 'сервис технологии онлайн запись цифровой продукт лендинг notimo saas', image: '/projects/notimo.webp', demoUrl: 'https://notimo-three.vercel.app/', price, isPublished: true,
+  heading: 'Notimo — лендинг цифрового сервиса',
+  seoTitle: 'Notimo — готовый шаблон лендинга цифрового сервиса',
+  seoDescription: 'Лендинг Notimo для презентации цифрового сервиса: изучите дизайн на мониторе, ноутбуке и смартфоне. Настроим содержание под ваш продукт.',
+  includedFeatures: ['Презентация цифрового продукта', 'Блоки с возможностями сервиса', 'Демонстрационные элементы интерфейса и предложения'],
+  customizationOptions: ['Название, логотип и позиционирование продукта', 'Тексты и изображения в существующих блоках', 'Контакты и предусмотренные ссылки на ваш сервис'],
+  faq: [
+   ['Я получу готовый сервис онлайн-записи?', 'В каталоге предлагается шаблон лендинга. Backend сервиса, личные кабинеты, хранение записей и платежи не входят в стандартную настройку.'],
+   ['Можно ли представить другой цифровой продукт?', 'Да, заменим содержание существующих блоков под ваш продукт. Изменение структуры и разработка новой функциональности оцениваются отдельно.'],
+   ['Данные и тарифы в демо действующие?', 'Демонстрационные данные иллюстрируют дизайн. Они не подтверждают работу продукта, действующие тарифы или клиентские результаты.'],
+  ],
+ },
+];
+export const publishedTemplates = catalogTemplates.filter(template => template.isPublished);
+export const catalogCategories = Array.from(new Map(publishedTemplates.map(t => [t.categoryId, { id: t.categoryId, label: t.category }])).values());
+const styleLabels: Record<string, string> = { editorial: 'Редакционный', warm: 'Тёплый', product: 'Продуктовый' };
+export const catalogStyles = Array.from(new Set(publishedTemplates.map(t => t.styleId))).map(id => ({ id, label: styleLabels[id] || id }));
+export const findTemplate = (id: string) => publishedTemplates.find(template => template.id === id || template.slug === id);
+export const templateById = findTemplate;
+export const templatePriceLabel = (template: CatalogTemplate) => template.price === null ? 'Уточнить стоимость' : money(template.price);
 export function filterTemplates(query: string, category: string, style: string) {
  const words = query.toLocaleLowerCase('ru').split(/\s+/).filter(Boolean);
- return catalogTemplates.filter(template => {
-  const haystack = `${template.name} ${template.category} ${template.description} ${template.keywords}`.toLocaleLowerCase('ru');
-  return (!category || template.categoryId === category)
-   && (!style || template.styleId === style)
-   && words.every(word => haystack.includes(word));
- });
+ return publishedTemplates.filter(t => (!category || t.categoryId === category) && (!style || t.styleId === style) && words.every(word => `${t.title} ${t.category} ${t.description} ${t.keywords}`.toLocaleLowerCase('ru').includes(word)));
 }
+export const standardSetup = ['Замена логотипа.', 'Замена существующих текстов.', 'Замена изображений.', 'Подстановка контактной информации.', 'Настройка существующих контактных ссылок, если она предусмотрена шаблоном.', 'Проверка сайта после внесённых изменений.', 'Подготовка файлов для передачи.'];
+export const extraServices = ['Добавление новых секций.', 'Изменение структуры сайта.', 'Создание новых страниц.', 'Разработка новой функциональности.', 'Интеграция сторонних сервисов.', 'Размещение сайта на хостинге клиента.', 'Домен и услуги хостинга.', 'Последующие доработки, не включённые в согласованный объём.'];
+export const purchaseSteps = ['Вы выбираете шаблон.', 'Отправляете заявку.', 'Менеджер связывается с вами.', 'Согласовываем материалы, цену и сроки.', 'Вы вносите предоплату.', 'Адаптируем шаблон.', 'Вы получаете ссылку для просмотра.', 'Вносим один согласованный пакет правок.', 'После приёмки вы оплачиваете остаток.', 'Передаём сайт или размещаем на хостинге за отдельную плату.'];

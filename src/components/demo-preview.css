@@ -1,0 +1,30 @@
+.demo-preview{min-width:0;margin:56px 0 64px}
+.demo-panel{min-width:0;max-width:1040px;margin-inline:auto}
+.demo-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.demo-tabs{display:inline-flex;gap:3px;padding:4px;border-radius:999px;background:var(--surface)}
+.demo-panel button,.demo-fallback a{font:inherit;font-size:13px;line-height:1.4}
+.demo-panel button{display:inline-flex;justify-content:center;align-items:center;gap:8px;border:0;background:transparent;color:var(--ink);padding:10px 14px;min-height:40px;cursor:pointer;border-radius:var(--radius-control)}
+.demo-tabs button{border-radius:999px;padding:10px 18px}
+.demo-tabs button[aria-selected=true]{background:var(--ink);color:var(--paper)}
+.demo-tabs button[aria-selected=true] svg{color:var(--accent)}
+.demo-panel svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.demo-actions{display:flex;gap:4px;align-items:center}.demo-actions button:hover{background:var(--surface)}
+.demo-panel button:focus-visible,.demo-panel a:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.demo-stage{width:100%;height:clamp(230px,45svh,400px);min-width:0;display:flex;justify-content:center;align-items:center;overflow:hidden;background:transparent;padding:12px 0;box-sizing:border-box;margin-top:10px}
+.demo-footprint{position:relative;flex:none}
+.demo-device{position:absolute;left:0;top:0;width:var(--demo-outer-width);height:var(--demo-outer-height);transform:scale(var(--demo-scale));transform-origin:top left}
+.demo-device-image{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;user-select:none;pointer-events:none}
+.demo-screen{position:absolute;left:var(--demo-screen-left);top:var(--demo-screen-top);width:var(--demo-width);height:var(--demo-height);overflow:hidden;background:white}
+.demo-device-phone .demo-screen{border-radius:40px;padding-top:30px}.demo-device-phone .demo-screen iframe{height:calc(var(--demo-height) - 30px)}
+.demo-device-phone .demo-screen:after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:196px;height:28px;border-radius:0 0 22px 22px;background:#080808;pointer-events:none}
+.demo-screen iframe{display:block;border:0;width:var(--demo-width);height:var(--demo-height);max-width:none;background:white;touch-action:auto}
+.demo-caption{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;margin-top:8px}
+.demo-status{font-size:13px;line-height:1.5}.demo-status:before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:middle}
+.demo-fallback{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;margin-top:6px}
+.demo-fallback a{text-decoration:underline;text-underline-offset:4px}.demo-panel .demo-fallback button{color:var(--muted);padding:6px;min-height:32px}
+.demo-preview-notice,.demo-help,.demo-unavailable{font-size:13px;line-height:1.5;color:var(--muted)}
+.demo-preview-notice{text-align:center;margin-top:8px}.demo-help{max-width:650px;margin:12px auto}.demo-unavailable{margin:36px 0;text-align:center}
+.demo-panel.is-expanded{position:fixed;inset:0;z-index:200;max-width:none;margin:0;background:var(--paper);padding:18px 24px;display:flex;flex-direction:column;overflow:auto;overscroll-behavior:contain}
+.is-expanded .demo-stage{flex:1;min-height:120px;height:auto;margin-top:12px;padding:8px 0}.is-expanded .demo-toolbar{flex:none}.is-expanded .demo-preview-notice{margin-top:4px}.is-expanded .demo-fallback{margin-top:0}
+@media(max-width:640px){.demo-preview{margin:36px 0 44px}.demo-toolbar{gap:8px}.demo-tabs{width:100%}.demo-tabs button{flex:1;padding:10px 4px;font-size:13px;gap:6px}.demo-actions{width:100%;justify-content:flex-end}.demo-stage{height:clamp(220px,38svh,320px);margin-top:0;padding:8px 0}.demo-caption{gap:6px;flex-direction:column}.demo-status{font-size:13px}.demo-fallback{gap:10px}.demo-preview-notice{font-size:13px;max-width:320px;margin:8px auto 0}.demo-panel.is-expanded{padding:12px}.is-expanded .demo-stage{min-height:100px}.is-expanded .demo-caption{flex-direction:row;gap:8px}.is-expanded .demo-preview-notice{display:none}}
+@media(prefers-reduced-motion:reduce){.demo-panel *{transition:none}}

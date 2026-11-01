@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { answerError, cleanAnswers, value, yougileTask } from '@/lib/brief';
+import { findTemplate } from '@/lib/catalog';
 import { briefConfig } from '@/lib/brief-config';
 
 export const runtime = 'nodejs';
@@ -27,6 +28,9 @@ export async function POST(request: Request) {
  if (typeof data.id !== 'string' || !/^[\da-f]{8}-[\da-f]{4}-4[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/i.test(data.id) || data.consent !== true || !data.answers || typeof data.answers !== 'object' || Array.isArray(data.answers)) return reply({ status: 400, body: { message: 'Проверьте ответы и согласие на обработку данных.' } });
  if (typeof data.website === 'string' && data.website.trim()) return reply({ status: 400, body: { message: 'Не удалось отправить заявку.' } });
  const answers = cleanAnswers(data.answers);
+ const templateId = value(answers, 'templateId');
+ const template = templateId ? findTemplate(templateId) : undefined;
+ if ((Object.hasOwn(data.answers, 'templateId') && (!template || !template.isPublished)) || (template && value(answers, 'route') !== 'Готовый шаблон')) return reply({ status: 400, body: { message: 'Выберите опубликованный шаблон из каталога.' } });
  const invalid = ['route', 'channel', 'phone'].map(id => answerError(id, answers)).find(Boolean);
  if (invalid || !value(answers, 'phone')) return reply({ status: 400, body: { message: invalid || 'Укажите телефон для связи.' } });
  const now = Date.now();
@@ -41,7 +45,7 @@ export async function POST(request: Request) {
  if (attempt.count >= 3 || deliveries.size >= 500) return reply({ status: 429, body: { message: 'Слишком много отправок. Попробуйте позже.' } });
  attempts.set(phone, { ...attempt, count: attempt.count + 1 });
  const id = data.id;
- const task = yougileTask(answers, id, new Date(now).toISOString(), config.columnId, config.policyUrl, config.assigned);
+ const task = yougileTask(answers, id, new Date(now).toISOString(), config.columnId, config.policyUrl, config.assigned, template ? { id: template.id, title: template.title, demoUrl: template.demoUrl, price: template.price } : undefined);
  const result = (async (): Promise<Result> => {
   try {
    const response = await fetch(`${config.baseUrl}/tasks`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.key}` }, body: JSON.stringify(task), signal: AbortSignal.timeout(15000), redirect: 'error', cache: 'no-store' });

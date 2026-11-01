@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-export function RequestSelect({ id, name, label, options }: { id: string; name: string; label: string; options: readonly string[] }) {
- const [value, setValue] = useState(options[0]);
+export function RequestSelect({ id, name, label, options, optionValues = options, defaultValue = optionValues[0], nativeFallback = false }: { id: string; name: string; label: string; options: readonly string[]; optionValues?: readonly string[]; defaultValue?: string; nativeFallback?: boolean }) {
+ const [value, setValue] = useState(options[Math.max(0, optionValues.indexOf(defaultValue))]);
+ const [ready, setReady] = useState(false);
+ useEffect(() => setReady(true), []);
  const [open, setOpen] = useState(false);
  const [active, setActive] = useState(0);
  const root = useRef<HTMLDivElement>(null);
@@ -14,9 +16,10 @@ export function RequestSelect({ id, name, label, options }: { id: string; name: 
   return () => document.removeEventListener('pointerdown', close);
  }, []);
  const choose = (index: number) => { setValue(options[index]); setActive(index); setOpen(false); button.current?.focus(); };
+ if (nativeFallback && !ready) return <div className="form-field request-select"><label htmlFor={id}>{label}</label><select id={id} name={name} defaultValue={defaultValue}>{options.map((option,index) => <option key={optionValues[index]} value={optionValues[index]}>{option}</option>)}</select></div>;
  return <div className="form-field request-select" ref={root} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}>
   <label id={`${id}-label`} htmlFor={id}>{label}</label>
-  <input type="hidden" name={name} value={value}/>
+  <input type="hidden" name={name} value={optionValues[options.indexOf(value)]}/>
   <button ref={button} id={id} className="request-select-trigger" type="button" role="combobox" aria-labelledby={`${id}-label ${id}-value`} aria-haspopup="listbox" aria-expanded={open} aria-controls={open ? `${id}-list` : undefined} aria-activedescendant={open ? `${id}-option-${active}` : undefined} onClick={() => { setActive(options.indexOf(value)); setOpen(!open); }} onKeyDown={event => {
    if (['ArrowDown','ArrowUp','Home','End'].includes(event.key)) {
     event.preventDefault(); setOpen(true);

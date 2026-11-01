@@ -9,7 +9,7 @@ export function cleanAnswers(input: unknown): Answers {
  if (!input || typeof input !== 'object' || Array.isArray(input)) return {};
  const raw = input as Record<string, unknown>;
  const clean: Answers = {};
- for (const [id, limit] of [['route', 100], ['channel', 100], ['phone', 40], ['comment', 1500]] as const) {
+ for (const [id, limit] of [['route', 100], ['channel', 100], ['phone', 40], ['comment', 1500], ['name', 100], ['templateId', 100]] as const) {
   if (typeof raw[id] === 'string') clean[id] = raw[id].trim().slice(0, limit);
  }
  return clean;
@@ -21,12 +21,13 @@ export function answerError(id: string, a: Answers) {
  if (id === 'channel' && !contactChannels.some(channel => channel === input)) return 'Выберите способ связи.';
  return '';
 }
-export function yougileTask(a: Answers, id: string, createdAt: string, columnId: string, consentUrl: string, assigned?: string) {
+export function yougileTask(a: Answers, id: string, createdAt: string, columnId: string, consentUrl: string, assigned?: string, template?: { id: string; title: string; demoUrl: string; price: number | null }) {
  const escape = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
  const description = [
   `Какой сайт нужен: ${value(a, 'route')}`, `Способ связи: ${value(a, 'channel')}`,
-  `Телефон: ${value(a, 'phone')}`, `Комментарий: ${value(a, 'comment') || 'Не указан'}`,
-  `ID: ${id}`, `Создана: ${createdAt}`, 'Источник: главная /#contacts',
+  `Телефон: ${value(a, 'phone')}`, ...(value(a, 'name') ? [`Имя: ${value(a, 'name')}`] : []),
+  ...(template ? [`Шаблон: ${template.title}`, `ID шаблона: ${template.id}`, `Демо: ${template.demoUrl}`, template.price === null ? 'Стоимость адаптации: согласовать с менеджером' : `Стоимость адаптации: ${template.price} ₽`] : []), `Комментарий: ${value(a, 'comment') || 'Не указан'}`,
+  `ID: ${id}`, `Создана: ${createdAt}`, template ? `Источник: каталог /catalog/${template.id}` : 'Источник: главная /#contacts',
   'Статус: новая заявка', 'Согласие: получено при отправке', `Политика: ${consentUrl}`,
   'Следующее действие: менеджеру связаться с клиентом и согласовать предложение.',
  ].join('\n');
