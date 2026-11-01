@@ -56,8 +56,8 @@
 
 /* One shared treatment for text links across the studio. */
 .shell a:is(.text-link,.secondary-link,.catalog-showcase-demo){background:transparent!important;border:0!important;border-radius:0;padding:10px 0;text-decoration:underline;text-underline-offset:5px;box-shadow:none}
-.shell a:not(.button):not(.logo):not(.catalog-image):not(.portfolio-card-image):not(.project-picture):not(.services-hero-work):not(.header-cta):not(.mobile-header-cta):not(.footer-navigation>a){transition:color .2s ease, text-decoration-color .2s ease}
-.shell a:not(.button):not(.logo):not(.catalog-image):not(.portfolio-card-image):not(.project-picture):not(.services-hero-work):not(.header-cta):not(.mobile-header-cta):not(.footer-navigation>a):hover{color:var(--accent)!important;background:transparent!important;text-decoration-color:var(--accent)}
+.shell a:not(.button):not(.mobile-menu-catalog):not(.logo):not(.catalog-image):not(.portfolio-card-image):not(.project-picture):not(.services-hero-work):not(.header-cta):not(.mobile-header-cta):not(.footer-navigation>a){transition:color .2s ease, text-decoration-color .2s ease}
+.shell a:not(.button):not(.mobile-menu-catalog):not(.logo):not(.catalog-image):not(.portfolio-card-image):not(.project-picture):not(.services-hero-work):not(.header-cta):not(.mobile-header-cta):not(.footer-navigation>a):hover{color:var(--accent)!important;background:transparent!important;text-decoration-color:var(--accent)}
 .catalog-showcase-demo{display:inline-flex;align-items:center;min-height:44px;font-size:var(--small);font-weight:600}
 @media(prefers-reduced-motion:reduce){.shell a{transition:none!important}}
 
