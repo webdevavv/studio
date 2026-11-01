@@ -37,3 +37,5 @@
 .studio-manager-bubble:before{content:'';display:block;position:absolute;top:auto;left:auto;right:-12px;bottom:7px;width:12px;height:22px;background:var(--sky);border-radius:0 0 0 12px;clip-path:none;z-index:1}
 @media(max-width:1100px){.studio-process-intro:has(.studio-manager){grid-template-columns:1fr;gap:24px}.studio-process-intro .studio-manager{margin-top:0}}
 @media(max-width:400px){.studio-manager{gap:9px}.studio-manager-avatar{width:34px;height:34px;flex-basis:34px;font-size:19px}.studio-manager-bubble{padding:18px 16px}}
+
+@media(max-width:760px){.studio-process .studio-manager{display:none}}

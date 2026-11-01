@@ -1,3 +1,4 @@
+import { MobileCardSlider } from './mobile-card-slider';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { Header } from './header';
@@ -28,7 +29,7 @@ export function PageShell({ breadcrumbs, children }: { breadcrumbs: Breadcrumb[]
   <Reveal selector=".commercial-intro h1,.commercial-intro p,.commercial-section>h2,.commercial-feature,.commercial-points>*,.commercial-process li,.commercial-faq details,.portfolio-card,.commercial-request h2"/>
  </div></>;
 }
-export function PageIntro({ title, description, children, aside, variant = 'default' }: { title: string; description: string; children?: ReactNode; aside?: ReactNode; variant?: string }) {
+export function PageIntro({ title, description, children, aside, variant = 'default' }: { title: ReactNode; description: ReactNode; children?: ReactNode; aside?: ReactNode; variant?: string }) {
  return <section className={`commercial-intro commercial-intro--${variant}`} aria-labelledby="page-title"><div><h1 id="page-title">{title}</h1><p>{description}</p>{children}</div>{aside && <aside>{aside}</aside>}</section>;
 }
 export function Section({ title, id, children, className = '' }: { title: string; id?: string; children: ReactNode; className?: string }) {
@@ -38,7 +39,7 @@ export function ServiceCards() {
  return <div className="commercial-offers">{serviceOffers.map(offer => <article className="commercial-feature" key={offer.href}><h3><Link href={offer.href}>{offer.title}</Link></h3><p>{offer.description}</p><strong className="commercial-price">{offer.price}</strong><ul>{offer.points.map(point => <li key={point}>{point}</li>)}</ul><LinkButton href={offer.href}>Подробнее</LinkButton></article>)}</div>;
 }
 export function IncludedWork({ legal = false }: { legal?: boolean }) {
- return <div className="commercial-points">{[
+ return <MobileCardSlider className="commercial-points included-work-track" label="Что входит в разработку">{[
   ['Структура и оформление', 'Располагаем информацию в понятном порядке. Для индивидуального сайта согласуем дизайн, для готового — сохраняем выбранный макет.'],
   ['Адаптивная вёрстка', 'Подстраиваем страницы под телефон, планшет и компьютер. Проверяем читаемость и доступность основных действий.'],
   ['Контактные элементы', 'Размещаем согласованные контакты и ссылки для обращения. Формы и внешние сервисы включаем по утверждённому заданию.'],
@@ -46,13 +47,13 @@ export function IncludedWork({ legal = false }: { legal?: boolean }) {
   ['Проверка работы', 'Проверяем ссылки, адаптивность и согласованные функции. Показываем результат до окончательного расчёта.'],
   ['Один пакет правок', 'Собираем ваши замечания одним списком в рамках утверждённой задачи. Новые пожелания оцениваем отдельно.'],
   ...(legal ? [['Законодательство и материалы', 'До запуска согласуем размещение необходимых правовых документов и элементов согласия, если сайт собирает персональные данные. Тексты документов и права на фотографии, логотип и другие материалы подтверждает заказчик. Юридическую подготовку документов и дополнительные технические настройки обсуждаем отдельно.']] : []),
- ].map(([title, text]) => <article key={title}><h3>{title}</h3><p>{text}</p></article>)}</div>;
+ ].map(([title, text]) => <article key={title}><h3>{title}</h3>{title === 'Законодательство и материалы' ? <><p className="included-legal-desktop">{text}</p><p className="included-legal-mobile">Согласуем документы и согласия для сбора данных. Тексты и права на материалы подтверждаете вы. Юридическая подготовка — отдельно.</p></> : <p>{text}</p>}</article>)}</MobileCardSlider>;
 }
-export function WorkSamples({ type, excludeSlug, limit = 3 }: { type?: 'landing-page' | 'business-card'; excludeSlug?: string; limit?: number }) {
+export function WorkSamples({ type, excludeSlug, limit = 3, navigationButtons = false }: { type?: 'landing-page' | 'business-card'; excludeSlug?: string; limit?: number; navigationButtons?: boolean }) {
  const all = portfolioProjects.filter(project => project.slug !== excludeSlug);
  const matches = type ? all.filter(project => project.siteType === type) : all;
  const projects = (matches.length ? matches : all).slice(0, limit);
- return <><div className="commercial-works" data-count={projects.length}>{projects.map(project => <PortfolioCard project={project} compact imageSizes={projects.length <= 2 ? '(max-width: 760px) calc(100vw - 36px), 48vw' : undefined} key={project.slug}/>)}</div><div className="commercial-actions"><LinkButton href="/portfolio" secondary>Все работы</LinkButton><LinkButton href="/catalog" secondary>Каталог готовых сайтов</LinkButton></div></>;
+ return <><div className="commercial-works" data-count={projects.length}>{projects.map(project => <PortfolioCard project={project} compact imageSizes={projects.length <= 2 ? '(max-width: 760px) calc(100vw - 36px), 48vw' : undefined} key={project.slug}/>)}</div><div className="commercial-actions"><LinkButton href="/portfolio" secondary={!navigationButtons}>Все работы</LinkButton><LinkButton href="/catalog" secondary={!navigationButtons}>Каталог готовых сайтов</LinkButton></div></>;
 }
 export function ProcessSteps({ compact = false }: { compact?: boolean }) {
  const steps = compact ? [

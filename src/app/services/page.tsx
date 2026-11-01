@@ -1,3 +1,4 @@
+import { MobileCardSlider } from '@/components/mobile-card-slider';
 import { StudioProcess } from '@/components/studio-process';
 import { CatalogCard } from '@/components/catalog-card';
 import '@/app/catalog/catalog.css';
@@ -17,14 +18,20 @@ export default function ServicesPage() {
    <div className="commercial-actions"><LinkButton href="#request">Обсудить проект</LinkButton><LinkButton href="/prices" secondary>Посмотреть цены</LinkButton></div>
   </PageIntro>
   <Section title="Наши услуги" id="formats"><ServiceCards/></Section>
-  <Section title="Какой сайт выбрать"><div className="commercial-columns"><div><h3>Продвигаете одно предложение?</h3><p><Link href="/services/landing-page" className="inline-link">Лендинг</Link> последовательно знакомит с конкретной услугой или товаром. Подходит, когда рекламное объявление должно вести на страницу с одной понятной целью.</p></div><div><h3>Представляете компанию?</h3><p><Link href="/services/business-card" className="inline-link">Сайт-визитка</Link> помогает узнать о вашем деле, сравнить направления и найти контакты. Состав страниц подбираем под объём информации.</p></div></div><p className="commercial-note">Если важен быстрый старт с уже выбранным оформлением, посмотрите <Link href="/catalog" className="inline-link">готовые сайты</Link>. В стандартную настройку входит замена материалов в существующей структуре.</p></Section>
+  <Section title="Какой сайт выбрать" className="service-format-choice">
+   <div className="business-pricing-layout">
+    <div className="business-pricing-main"><h3>Лендинг</h3><p>Когда нужно представить одну услугу или товар и привести посетителя к конкретному действию.</p><ul><li>Одно предложение на одной странице</li><li>Последовательный рассказ о продукте</li><li>Понятная цель для рекламного трафика</li></ul><LinkButton href="/services/landing-page">Подробнее о лендинге</LinkButton></div>
+    <div className="business-pricing-main service-format-business"><h3>Сайт-визитка</h3><p>Когда нужно познакомить с компанией и помочь клиенту разобраться в нескольких направлениях.</p><ul><li>Разделы о компании, услугах и работах</li><li>Структура под объём ваших материалов</li><li>Контакты и переход к обращению</li></ul><LinkButton href="/services/business-card">Подробнее о сайте-визитке</LinkButton></div>
+   </div>
+   <div className="service-format-ready"><div><h3>Уже выбрали оформление?</h3><p>Для старта на готовой основе заменим материалы в существующей структуре шаблона.</p></div><Link className="text-link" href="/catalog">Посмотреть готовые сайты</Link></div>
+  </Section>
   <section className="commercial-section services-included" aria-labelledby="included-title"><div className="services-included-heading"><h2 id="included-title">Что входит в разработку</h2><p>От структуры до проверки: согласуем состав работ до старта и покажем готовый сайт перед окончательным расчётом.</p></div><IncludedWork legal/></section>
   <StudioProcess title="Понятный путь от задачи" accent="к сайту" chat description="Здравствуйте! Расскажите, чем вы занимаетесь и какую задачу должен решить сайт? Помогу выбрать формат, уточню детали и согласую с вами стоимость и дату старта." items={[
    ['Согласованный срок', 'Типовой сайт готовим до двух дней после согласования объёма, получения материалов и предоплаты. Дату старта подтверждает менеджер.'],
    ['Цена до разработки', 'Фиксируем состав работ и стоимость заранее. Если появляются дополнительные страницы или функции, сначала обсуждаем их оценку.'],
    ['Проверяем результат', 'Используем современные инструменты вёрстки и повторно проверяем ссылки, мобильный вид и основные действия перед демонстрацией.'],
   ]}/>
-  <Section title="Примеры наших работ"><div className="catalog-list services-examples">{publishedTemplates.map(template => <CatalogCard key={template.id} template={template} showcase/>)}<CatalogCard showcase detailHref="/#site-preview" template={{ ...publishedTemplates[0], id: 'coffee-concept', slug: 'coffee-concept', title: 'Крошка', name: 'Крошка', category: 'Демо-макет кофейни', image: '/projects/coffee.png', description: concepts[0].note, demoUrl: '/#site-preview', price: null }}/></div></Section>
+  <Section title="Примеры наших работ"><MobileCardSlider className="catalog-list services-examples" label="Примеры наших работ">{publishedTemplates.map(template => <CatalogCard key={template.id} template={template} showcase/>)}<CatalogCard showcase detailHref="/#site-preview" template={{ ...publishedTemplates[0], id: 'coffee-concept', slug: 'coffee-concept', title: 'Крошка', name: 'Крошка', category: 'Демо-макет кофейни', image: '/projects/coffee.png', description: concepts[0].note, demoUrl: '/#site-preview', price: null }}/></MobileCardSlider></Section>
   <FAQ items={[
    ['Как понять, какой сайт мне нужен?', 'Опишите, что посетитель должен узнать и сделать. Для одной услуги чаще подходит лендинг, для знакомства с компанией — сайт-визитка. Менеджер предложит формат после обсуждения задачи.'],
    ['Когда начинается срок до двух дней?', 'После согласования задачи, получения материалов и предоплаты, с подтверждённой даты старта. Для нестандартных проектов срок оцениваем отдельно.'],

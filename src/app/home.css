@@ -124,3 +124,29 @@
 .home-shell .footer-top a{border-radius:0;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:6px;transition:color .2s ease,text-decoration-color .2s ease}
 .home-shell .footer-top a:hover{background:transparent;color:var(--accent);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:1px}
 @media(prefers-reduced-motion:reduce){.home-shell .footer-top a{transition:none}}
+
+.mobile-card-slider{min-width:0}
+.mobile-slider-pagination{display:none}
+@media(max-width:760px){
+ .home-shell .mobile-slider-track{display:flex;flex-direction:row;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;align-items:stretch;padding:4px 0 8px}
+ .mobile-slider-track::-webkit-scrollbar{display:none}
+ .home-shell .mobile-slider-track>article{flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always;margin:0}
+ .home-shell .mobile-slider-track>.service{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start}
+ .home-shell .mobile-slider-track .service-offer{flex:1;justify-content:space-between}
+ .home-shell .mobile-slider-track>.project{display:flex;flex-direction:column;gap:18px}
+ .mobile-slider-track .project-heading{position:static;margin:0}
+ .mobile-slider-track .project-meta{display:flex;flex:1;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:16px;margin:0}
+ .mobile-slider-pagination{display:flex;justify-content:center;align-items:center;gap:2px;margin-top:12px}
+ .mobile-slider-pagination button{display:grid;place-items:center;width:36px;height:36px;border:0;background:transparent;padding:0;border-radius:50%}
+ .mobile-slider-pagination button span{width:8px;height:8px;background:#8baebf;border-radius:50%;transition:background-color .25s ease,transform .25s ease}
+ .mobile-slider-pagination button[aria-current] span{background:var(--accent);transform:scale(1.25)}
+}
+@media(prefers-reduced-motion:reduce){.mobile-slider-pagination button span{transition:none}}
+
+@media(max-width:760px){.home-shell .about-manifesto{display:none}}
+
+@media(max-width:760px){
+ .mobile-slider-pagination{gap:0}
+ .mobile-slider-pagination button{width:24px;height:36px}
+ .home-shell .mobile-slider-track,.home-shell .mobile-slider-track [data-reveal],.home-shell .mobile-slider-track .reveal-in{animation:none!important;opacity:1!important;transform:none!important}
+}

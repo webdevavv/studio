@@ -1,0 +1,13 @@
+/* Shared mobile gutters: keep nested panels from narrowing the content twice. */
+@media(max-width:760px){
+ .shell{padding-inline:14px}
+ .shell :is(.commercial-intro,.commercial-request,.commercial-feature,.commercial-expenses,.business-purpose-grid article,.business-purpose-audience,.business-included-list,.business-included-extra,.business-pricing-main,.business-pricing-details,.service-format-ready,.portfolio-filters,.portfolio-empty,.portfolio-card-body,.blog-intro,.blog-filters,.blog-entry,.blog-empty,.blog-catalog-callout,.blog-related article,.catalog-intro,.catalog-process,.template-purchase,.template-request,.template-about,.template-changes,.contact,.pricing-options article,.approach-points article,.service,.studio-process,.affordable-price,.affordable-price-panel){padding-inline:16px!important}
+ .shell .commercial-intro>aside{padding-inline:14px!important}
+ .shell .commercial-intro>aside>.commercial-feature{padding-inline:0!important}
+ .shell .commercial-intro>aside .commercial-note{padding-inline:12px!important}
+ .shell .services-included .included-work-track>article{padding-inline:18px!important}
+ .shell .catalog-item-body{padding-inline:16px!important}
+ .shell .payment-flow-step{padding-inline:16px!important}
+ .shell :is(.site-tree-root,.site-tree-page,.site-tree-result){padding-inline:16px!important}
+ .shell .commercial-faq details,.shell .faq-list details{padding-inline:16px!important}
+}

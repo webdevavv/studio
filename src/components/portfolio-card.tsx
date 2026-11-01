@@ -13,7 +13,10 @@ export function PortfolioCard({ project, priority = false, compact = false, imag
    <p className="portfolio-status">{project.status === 'demo' ? 'Демонстрационный проект' : 'Клиентский проект'}</p>
    <p className="portfolio-card-category">{portfolioSiteTypeLabels[project.siteType]} · {project.category}</p>
    <p>{project.task}</p>
-   <Link className="text-link" href={`/portfolio/${project.slug}`}>Разбор проекта</Link>
+   <div className="portfolio-card-actions">
+    {compact && <a className="text-link portfolio-card-demo" href={project.demoUrl} target="_blank" rel="noopener noreferrer">Посмотреть демо</a>}
+    <Link className="text-link" href={`/portfolio/${project.slug}`}>Разбор проекта</Link>
+   </div>
   </div>
  </article>;
 }
