@@ -56,7 +56,7 @@ test('detail pages use correct data, unique SEO, breadcrumbs and selected reques
   await expect(page).toHaveURL(new RegExp(`/catalog/${slug}#request$`));
   const form = page.getByRole('form', { name: `Заявка на макет «${title}»` });
   await expect(form).toHaveAttribute('data-template-id', slug);
-  await expect(form.getByRole('button')).toBeDisabled();
+  await expect(form.getByRole('button', { name: 'Отправить заявку', exact: true })).toBeEnabled();
   await expect(form).toContainText('Приём заявок пока не подключён');
  }
  expect(titles.size).toBe(3); expect(descriptions.size).toBe(3);
@@ -93,7 +93,7 @@ test('filtering and product text work without JavaScript; unknown template is 40
  await expect(page.locator('h1')).toContainText('Notimo');
  await expect(page.getByRole('heading', { name: 'Что оплачивается отдельно' })).toBeVisible();
  await expect(page.locator('.template-selection')).toContainText('2 000 ₽');
- await expect(page.getByRole('button', { name: 'Дать сайту старт' })).toBeDisabled();
+ await expect(page.getByRole('button', { name: 'Отправить заявку' })).toBeDisabled();
  await context.close();
  expect((await request.get('/catalog/non-existent-template')).status()).toBe(404);
 });

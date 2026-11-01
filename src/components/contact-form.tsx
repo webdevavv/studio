@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import './contact-form.css';
 import { RequestSelect } from './request-select';
 import { phoneError } from '@/lib/phone';
 import { contactChannels, requestKinds } from '@/lib/brief';

@@ -1,0 +1,35 @@
+.contact-form fieldset{border:0;padding:0;margin:0;min-width:0;display:grid;gap:22px}
+.contact-form label{font-size:14px;margin-bottom:10px;line-height:1.5}
+.contact-form label span{font-weight:400}
+.contact-form :is(input,select,textarea){font:inherit;font-size:16px;width:100%;min-width:0;background:var(--paper);color:var(--ink);border:1px solid transparent;border-radius:var(--radius-control);padding:14px 16px;min-height:52px}
+.contact-form select{appearance:none;-webkit-appearance:none;padding-right:48px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23132938' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;background-size:20px;line-height:1.5;cursor:pointer}
+.contact-form textarea{display:block;resize:vertical}
+.contact-form .consent-label{display:flex;align-items:start;gap:12px;margin:0}
+.contact-form .consent-label input{appearance:auto;flex:0 0 20px;width:20px;height:20px;min-height:20px;padding:0;margin:2px 0 0;accent-color:var(--accent)}
+.contact-form a{text-decoration:underline;text-underline-offset:3px}
+.contact-form :is(input,select,textarea,button,a):focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.contact-form .contact-form-error{color:#ffb49a;font-size:14px;margin-top:8px}
+.contact-form .contact-form-error:empty{display:none}
+.contact-form .contact-form-note{margin:0;font-size:14px}
+.contact-form .button{justify-self:start;white-space:normal}
+.contact-form :disabled{cursor:default;opacity:.75}
+.form-trap{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+.request-select{position:relative;min-width:0}
+.contact-form .request-select-trigger{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:54px;padding:14px 16px;border:1px solid transparent;border-radius:var(--radius-control);background:var(--paper);color:var(--ink);font:inherit;font-size:16px;line-height:1.5;text-align:left}
+.request-select-trigger svg{flex-shrink:0;transition:transform .2s ease}
+.request-select-trigger[aria-expanded=true] svg{transform:rotate(180deg)}
+.request-select-list{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:10;list-style:none;margin:0;padding:6px;background:var(--paper);color:var(--ink);border:1px solid #b8d0dc;border-radius:var(--radius-control);box-shadow:0 12px 28px #0003;max-height:260px;overflow-y:auto}
+.request-select-list li{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:46px;padding:11px 12px;border-radius:8px;font-size:16px;line-height:1.5;cursor:pointer}
+.request-select-list li.active{background:var(--surface)}
+.request-select-list li[aria-selected=true]{font-weight:600}
+
+.request-select-check{display:block;flex:0 0 20px;width:20px;height:20px}
+
+
+.template-request-form.contact-form{margin-top:0;gap:22px}
+.template-request-form.contact-form .request-field :is(input,textarea){border:1px solid transparent;padding:14px 16px;min-height:52px;background:var(--paper);color:var(--ink);border-radius:var(--radius-control)}
+.template-request-form.contact-form .request-field label{font-size:14px;margin-bottom:10px;font-weight:400}
+.template-request-form.contact-form .request-channel-field{display:block}
+.template-request-form.contact-form :disabled{opacity:.75}
+.template-request-form.contact-form :is(input,textarea,button,a):focus-visible{outline:3px solid var(--accent);outline-offset:4px}
