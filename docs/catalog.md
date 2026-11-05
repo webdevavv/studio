@@ -1,3 +1,28 @@
+# Дополнение от 5 ноября 2026 года
+
+В существующий каталог добавлены десять шаблонов по 2 222 ₽ каждый. Первые три записи сохраняют цену 2 000 ₽. Все новые страницы используют прежний `/catalog/[slug]`: просмотр на устройствах, описание, условия настройки, FAQ и форма выбранного шаблона. Sitemap и фильтры берут данные из общей модели; отдельные компоненты страниц не создаются.
+
+| Название | Страница | Демо |
+| --- | --- | --- |
+| АвтоПрофи | `/catalog/autoservice` | https://autoservice-five-coral.vercel.app/ |
+| АвтоТорк | `/catalog/autotork` | https://autotork-ten.vercel.app/ |
+| АвтоМастер | `/catalog/avtoservis` | https://avtoservis-ten.vercel.app/ |
+| Lumière | `/catalog/beauty-jade` | https://beauty-jade-eight.vercel.app/ |
+| Аврора | `/catalog/beauty-salon` | https://beauty-salon-sm8c.vercel.app/ |
+| СтройМастер | `/catalog/construction` | https://construction-xi-eight.vercel.app/ |
+| СтройДом | `/catalog/stroitelstvo` | https://stroitelstvo-orcin.vercel.app/ |
+| NEXUS Авто | `/catalog/nexus-avto` | https://nexus-avto.vercel.app/ |
+| GreenWood | `/catalog/green-wood` | https://grenn-wood.vercel.app/ |
+| AURA Neo-Beauty | `/catalog/neo-beauty` | https://neo-beauty-eight.vercel.app/ |
+
+Все десять адресов вернули HTTP 200 при проверке 5 ноября. X-Frame-Options и CSP в ответах не обнаружены. Сохранены реальные первые экраны 1440×960 при DPR 2 в `public/projects/<slug>.webp`, WebP quality 90. Формы на внешних сайтах не отправлялись. Названия взяты из демосайтов; их отзывы, гарантии и показатели не переносятся в описание как подтверждённые факты.
+
+Новые категории: «Автосервисы» (`auto`) и «Строительство» (`construction`). Три новых салона дополняют «Красота и здоровье». Главная сохраняет прежнюю подборку из трёх примеров; полный выбор доступен в каталоге.
+
+Проверки дополнения: production-сборка, TypeScript и `git diff --check` прошли. Три браузерных теста прошли: поиск и фильтры, работа без JavaScript и 404, все десять новых карточек/страниц с правильными демо, превью и ценой. Новые страницы проверены на 320, 375, 768 и 1440 px — горизонтального переполнения нет. Публикация на хостинг не выполнялась.
+
+---
+
 # Каталог готовых сайтов
 
 Обновлено 1 ноября 2026 года, после правок по отзыву о масштабе и прокрутке. Реализация выполнена в существующем Next.js 16 / React 19 проекте; новая CRM, административная панель и отдельный проект не создавались.

@@ -1,11 +1,11 @@
 import { publishedTemplates } from './catalog';
 
-// The homepage reuses published catalog entries and their detail routes.
+// Keep the existing three homepage examples; the full selection lives in the catalog.
 export type PortfolioProject = {
  id: string; name: string; category: string; description: string; image: string;
  demo: boolean; href: string; detailHref?: string;
 };
-export const portfolio: PortfolioProject[] = publishedTemplates.map(template => ({
+export const portfolio: PortfolioProject[] = publishedTemplates.slice(0, 3).map(template => ({
  id: template.id, name: template.name, category: template.category,
  description: template.description, image: template.image, demo: true, href: `/catalog/${template.id}`,
 }));

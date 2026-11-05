@@ -5,14 +5,26 @@ const entries = [
  ['golden-hands', 'Золотые ручки', 'https://goldenhands38.vercel.app/'],
  ['notimo', 'Notimo', 'https://notimo-three.vercel.app/'],
 ];
+const newEntries = [
+ ['autoservice', 'АвтоПрофи', 'https://autoservice-five-coral.vercel.app/'],
+ ['autotork', 'АвтоТорк', 'https://autotork-ten.vercel.app/'],
+ ['avtoservis', 'АвтоМастер', 'https://avtoservis-ten.vercel.app/'],
+ ['beauty-jade', 'Lumière', 'https://beauty-jade-eight.vercel.app/'],
+ ['beauty-salon', 'Аврора', 'https://beauty-salon-sm8c.vercel.app/'],
+ ['construction', 'СтройМастер', 'https://construction-xi-eight.vercel.app/'],
+ ['stroitelstvo', 'СтройДом', 'https://stroitelstvo-orcin.vercel.app/'],
+ ['nexus-avto', 'NEXUS Авто', 'https://nexus-avto.vercel.app/'],
+ ['green-wood', 'GreenWood', 'https://grenn-wood.vercel.app/'],
+ ['neo-beauty', 'AURA Neo-Beauty', 'https://neo-beauty-eight.vercel.app/'],
+];
 test.beforeEach(async ({ page }) => {
- await page.route(/https:\/\/(beauty-she|goldenhands38|notimo-three)\.vercel\.app\//, route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><html><body style="height:3000px">Демо</body></html>' }));
+ await page.route(/https:\/\/[^/]+\.vercel\.app\//, route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><html><body style="height:3000px">Демо</body></html>' }));
 });
 
 test('catalog real cards, search, combined filters, reset and history', async ({ page }) => {
  await page.goto('/catalog');
  await expect(page.locator('h1')).toContainText('Готовые сайты для вашего бизнеса');
- await expect(page.locator('.catalog-item')).toHaveCount(3);
+ await expect(page.locator('.catalog-item')).toHaveCount(13);
  await expect(page.locator('iframe')).toHaveCount(0);
  for (const [slug, title, url] of entries) {
   const card = page.locator('.catalog-item').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
@@ -23,13 +35,13 @@ test('catalog real cards, search, combined filters, reset and history', async ({
  await page.getByRole('combobox', { name: /Сфера бизнеса/ }).click();
  await page.getByRole('option', { name: 'Красота и здоровье', exact: true }).click();
  await page.getByRole('button', { name: 'Показать сайты' }).click();
- await expect(page.locator('.catalog-item')).toHaveCount(2);
+ await expect(page.locator('.catalog-item')).toHaveCount(5);
  await page.getByRole('combobox', { name: /Характер дизайна/ }).click();
  await page.getByRole('option', { name: 'Продуктовый', exact: true }).click();
  await page.getByRole('button', { name: 'Показать сайты' }).click();
  await expect(page.getByRole('heading', { name: 'Пока нет совпадений' })).toBeVisible();
  await page.getByRole('link', { name: 'Сбросить фильтры' }).click();
- await expect(page.locator('.catalog-item')).toHaveCount(3);
+ await expect(page.locator('.catalog-item')).toHaveCount(13);
  await expect(page.getByRole('combobox', { name: /Сфера бизнеса/ })).toContainText('Все сайты');
  await page.getByLabel('Найти шаблон').fill('notimo');
  await page.getByRole('button', { name: 'Показать сайты' }).click();
@@ -85,7 +97,7 @@ test('requested viewport widths fit catalog and all details; columns and navigat
 test('filtering and product text work without JavaScript; unknown template is 404', async ({ browser, request }) => {
  const context = await browser.newContext({ javaScriptEnabled: false });
  const page = await context.newPage();
- await page.route(/https:\/\/(beauty-she|goldenhands38|notimo-three)\.vercel\.app\//, route => route.fulfill({ body: '<html>Демо</html>', contentType: 'text/html' }));
+ await page.route(/https:\/\/[^/]+\.vercel\.app\//, route => route.fulfill({ body: '<html>Демо</html>', contentType: 'text/html' }));
  await page.goto('/catalog');
  await page.getByLabel('Сфера бизнеса').selectOption('technology');
  await page.getByRole('button', { name: 'Показать сайты' }).click();
@@ -97,4 +109,40 @@ test('filtering and product text work without JavaScript; unknown template is 40
  await expect(page.getByRole('button', { name: 'Отправить заявку' })).toBeDisabled();
  await context.close();
  expect((await request.get('/catalog/non-existent-template')).status()).toBe(404);
+});
+
+
+test('ten additions have their own cards, previews, demo links and 2222 ruble detail pages', async ({ page }) => {
+ test.setTimeout(90000);
+ await page.emulateMedia({ reducedMotion: 'reduce' });
+ await page.goto('/catalog');
+ for (const [slug, title, demoUrl] of newEntries) {
+  const card = page.locator('.catalog-item').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
+  await expect(card).toContainText('2 222 ₽');
+  await expect(card.getByRole('link', { name: 'Подробнее', exact: true })).toHaveAttribute('href', `/catalog/${slug}`);
+  await expect(card.getByRole('link', { name: /Открыть демо/ })).toHaveAttribute('href', demoUrl);
+  await card.scrollIntoViewIfNeeded();
+  await expect.poll(() => card.locator('img').evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+ }
+ const titles = new Set<string>();
+ for (const [slug, title, demoUrl] of newEntries) {
+  const response = await page.goto(`/catalog/${slug}`);
+  expect(response?.status()).toBe(200);
+  await expect(page.locator('h1')).toContainText(title);
+  await expect(page.locator('.template-purchase strong')).toHaveText('2 222 ₽');
+  await expect(page.locator('.template-selection')).toContainText('2 222 ₽');
+  await expect(page.locator('iframe')).toHaveAttribute('src', demoUrl);
+  await expect(page.locator('form[data-template-id]')).toHaveAttribute('data-template-id', slug);
+  await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', new RegExp(`/catalog/${slug}$`));
+  titles.add(await page.title());
+  for (const width of [320, 375, 768, 1440]) {
+   await page.setViewportSize({ width, height: 900 });
+   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${slug} @${width}`).toBe(true);
+  }
+ }
+ expect(titles.size).toBe(newEntries.length);
+ for (const [category, count] of [['auto', 4], ['construction', 3], ['beauty', 5]] as const) {
+  await page.goto(`/catalog?category=${category}`);
+  await expect(page.locator('.catalog-item')).toHaveCount(count);
+ }
 });
