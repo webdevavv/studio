@@ -79,7 +79,42 @@ const demoProjects: PortfolioProject[] = publishedTemplates.flatMap(template => 
  }];
 });
 
-export const portfolioProjects: PortfolioProject[] = [...demoProjects, ...clientProjects];
+const standaloneDemoProjects: PortfolioProject[] = [
+ {
+  slug: 'prime-station', title: 'Prime Station', status: 'demo', categoryId: 'auto', category: 'Автосервисы', siteType: 'business-card',
+  description: 'Сайт детейлинг-центра с каталогом услуг и ценами.',
+  task: 'Помочь владельцу автомобиля найти нужную услугу и узнать ориентировочную стоимость до обращения.',
+  image: '/projects/prime-station.webp', demoUrl: 'https://prime-station.vercel.app/',
+  solution: 'На первом экране выделены направления работ и переход к ценам. Услуги сгруппированы по задачам: от защиты кузова и ремонта фар до ухода за салоном и шумоизоляции.',
+  developmentFeatures: ['Навигация по направлениям работ', 'Переходы из карточек услуг к ценам', 'Контакты для обсуждения работ'],
+  sections: [
+   { title: 'Услуги', description: 'Карточки объясняют, какие задачи решают детейлинг, защита плёнкой, автосвет и шумоизоляция.' },
+   { title: 'Цены', description: 'Прайс разделён по направлениям, чтобы посетитель мог найти нужную работу.' },
+   { title: 'Контакты', description: 'После знакомства с услугами посетитель может связаться с центром и уточнить детали.' },
+  ],
+  result: 'Сайт объединяет направления детейлинга, цены и способы связи в одной точке.',
+  seoTitle: 'Prime Station — сайт детейлинг-центра',
+  seoDescription: 'Разбор сайта Prime Station: структура услуг по детейлингу и автосвету, прайс и контакты.',
+ },
+ {
+  slug: 'one-unit', title: 'One Unit', status: 'demo', categoryId: 'events', category: 'Мероприятия', siteType: 'business-card',
+  description: 'Сайт агентства по организации свадеб и мероприятий.',
+  task: 'Показать форматы работы агентства и помочь посетителю перейти от просмотра примеров к обсуждению своего события.',
+  image: '/projects/one-unit.webp', demoUrl: 'https://one-unit.vercel.app/',
+  solution: 'Сайт объясняет разницу между организацией и координацией мероприятия, показывает примеры событий и ведёт к информации о стоимости и контактам.',
+  developmentFeatures: ['Услуги разделены по форматам участия', 'Галерея мероприятий доступна из навигации', 'На первом экране есть переход к обсуждению события'],
+  sections: [
+   { title: 'Форматы работы', description: 'Посетитель может выбрать полную организацию, координацию в день события или обсудить другой формат.' },
+   { title: 'Портфолио агентства', description: 'Примеры событий знакомят с визуальной подачей и масштабом работ.' },
+   { title: 'Стоимость и контакты', description: 'Рядом с информацией о стоимости есть способы связаться с агентством и рассказать о планах.' },
+  ],
+  result: 'Сайт знакомит с услугами агентства и даёт понятный маршрут от просмотра работ к первому контакту.',
+  seoTitle: 'One Unit — сайт агентства мероприятий',
+  seoDescription: 'Разбор сайта One Unit: услуги по организации и координации событий, примеры работ и контакты.',
+ },
+];
+
+export const portfolioProjects: PortfolioProject[] = [...demoProjects, ...standaloneDemoProjects, ...clientProjects];
 
 export const getPortfolioProject = (slug: string) => portfolioProjects.find(project => project.slug === slug);
 export const portfolioCategories = Array.from(new Map(portfolioProjects.map(project => [project.categoryId, { id: project.categoryId, label: project.category }])).values());

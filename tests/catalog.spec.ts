@@ -6,6 +6,12 @@ const entries = [
  ['notimo', 'Notimo', 'https://notimo-three.vercel.app/'],
 ];
 const newEntries = [
+ ['mirelle', 'Mirelle', 'https://beauty-salon-template-kappa.vercel.app/'],
+ ['osnova', 'Основа', 'https://beauty-salon-template-gyqp.vercel.app/'],
+ ['tork-one', 'ТОРК', 'https://tork-one.vercel.app/'],
+ ['pulse-eight', 'Пульс', 'https://pulse-eight-peach-20.vercel.app/'],
+ ['myata', 'Мята', 'https://pulse-1qno.vercel.app/'],
+
  ['autoservice', 'АвтоПрофи', 'https://autoservice-five-coral.vercel.app/'],
  ['autotork', 'АвтоТорк', 'https://autotork-ten.vercel.app/'],
  ['avtoservis', 'АвтоМастер', 'https://avtoservis-ten.vercel.app/'],
@@ -24,7 +30,7 @@ test.beforeEach(async ({ page }) => {
 test('catalog real cards, search, combined filters, reset and history', async ({ page }) => {
  await page.goto('/catalog');
  await expect(page.locator('h1')).toContainText('Готовые сайты для вашего бизнеса');
- await expect(page.locator('.catalog-item')).toHaveCount(13);
+ await expect(page.locator('.catalog-item')).toHaveCount(18);
  await expect(page.locator('iframe')).toHaveCount(0);
  for (const [slug, title, url] of entries) {
   const card = page.locator('.catalog-item').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
@@ -35,13 +41,13 @@ test('catalog real cards, search, combined filters, reset and history', async ({
  await page.getByRole('combobox', { name: /Сфера бизнеса/ }).click();
  await page.getByRole('option', { name: 'Красота и здоровье', exact: true }).click();
  await page.getByRole('button', { name: 'Показать сайты' }).click();
- await expect(page.locator('.catalog-item')).toHaveCount(5);
+ await expect(page.locator('.catalog-item')).toHaveCount(7);
  await page.getByRole('combobox', { name: /Характер дизайна/ }).click();
  await page.getByRole('option', { name: 'Продуктовый', exact: true }).click();
  await page.getByRole('button', { name: 'Показать сайты' }).click();
  await expect(page.getByRole('heading', { name: 'Пока нет совпадений' })).toBeVisible();
  await page.getByRole('link', { name: 'Сбросить фильтры' }).click();
- await expect(page.locator('.catalog-item')).toHaveCount(13);
+ await expect(page.locator('.catalog-item')).toHaveCount(18);
  await expect(page.getByRole('combobox', { name: /Сфера бизнеса/ })).toContainText('Все сайты');
  await page.getByLabel('Найти шаблон').fill('notimo');
  await page.getByRole('button', { name: 'Показать сайты' }).click();
@@ -112,7 +118,7 @@ test('filtering and product text work without JavaScript; unknown template is 40
 });
 
 
-test('ten additions have their own cards, previews, demo links and 2222 ruble detail pages', async ({ page }) => {
+test('new templates have their own cards, previews, demo links and 2222 ruble detail pages', async ({ page }) => {
  test.setTimeout(90000);
  await page.emulateMedia({ reducedMotion: 'reduce' });
  await page.goto('/catalog');
@@ -141,7 +147,7 @@ test('ten additions have their own cards, previews, demo links and 2222 ruble de
   }
  }
  expect(titles.size).toBe(newEntries.length);
- for (const [category, count] of [['auto', 4], ['construction', 3], ['beauty', 5]] as const) {
+ for (const [category, count] of [['auto', 5], ['construction', 4], ['beauty', 7], ['fitness', 1]] as const) {
   await page.goto(`/catalog?category=${category}`);
   await expect(page.locator('.catalog-item')).toHaveCount(count);
  }

@@ -4,9 +4,9 @@ import { portfolioProjects } from '../src/lib/portfolio';
 const pages = [
  ['/services', 'Создаём сайты, которые помогают вашему бизнесу', 'Создание сайтов для бизнеса — услуги веб-студии'],
  ['/prices', 'Сколько стоит создать сайт?', 'Цены на создание сайтов — стоимость лендинга и сайта-визитки'],
- ['/services/landing-page', 'Создадим лендинг для вашего бизнеса за 2 дня', 'Создание лендинга под ключ за 10 000 ₽ — разработка за 2 дня'],
+ ['/services/landing-page', 'Создадим лендинг для вашего бизнеса', 'Создание лендинга под ключ за 10 000 ₽ — разработка за 2 дня'],
  ['/services/business-card', 'Создадим сайт-визитку для вашей компании', 'Создание сайта-визитки для бизнеса — заказать под ключ'],
- ['/portfolio', 'Наши работы — сайты, которые можно посмотреть вживую', 'Портфолио веб-студии — примеры разработанных сайтов'],
+ ['/portfolio', 'Наши работы — сайты в деталях', 'Портфолио веб-студии — примеры разработанных сайтов'],
  ...portfolioProjects.map(project => [`/portfolio/${project.slug}`, project.title, project.seoTitle]),
 ];
 
@@ -104,7 +104,7 @@ test('portfolio filters and all content work without JavaScript', async ({ brows
  await page.getByRole('button', { name: 'Показать проекты' }).click();
  await expect(page.getByRole('heading', { name: 'Пока нет такого примера' })).toBeVisible();
  await page.getByRole('link', { name: 'Сбросить фильтры' }).click();
- await expect(page.locator('.portfolio-card')).toHaveCount(3);
+ await expect(page.locator('.portfolio-card')).toHaveCount(5);
  await context.close();
 });
 

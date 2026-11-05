@@ -1,14 +1,21 @@
-import { publishedTemplates } from './catalog';
+import { findTemplate, publishedTemplates, type CatalogTemplate } from './catalog';
 
-// Keep the existing three homepage examples; the full selection lives in the catalog.
 export type PortfolioProject = {
  id: string; name: string; category: string; description: string; image: string;
  demo: boolean; href: string; detailHref?: string;
 };
-export const portfolio: PortfolioProject[] = publishedTemplates.slice(0, 3).map(template => ({
- id: template.id, name: template.name, category: template.category,
- description: template.description, image: template.image, demo: true, href: `/catalog/${template.id}`,
-}));
+function toProject(template: CatalogTemplate): PortfolioProject {
+ return {
+  id: template.id, name: template.name, category: template.category,
+  description: template.description, image: template.image, demo: true, href: `/catalog/${template.slug}`,
+ };
+}
+
+export const portfolio = publishedTemplates.slice(0, 3).map(toProject);
+export const featuredCatalogProjects = ['mirelle', 'tork-one', 'pulse-eight'].flatMap(slug => {
+ const template = findTemplate(slug);
+ return template ? [toProject(template)] : [];
+});
 export const homeSteps = [
  ['Расскажите о задаче', 'Оставьте короткую заявку. Достаточно телефона и пары слов о вашем бизнесе.'],
  ['Согласуем предложение', 'Менеджер уточнит детали, зафиксирует состав работ, стоимость, предоплату и срок.'],
